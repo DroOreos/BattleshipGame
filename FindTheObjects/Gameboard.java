@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 public class Gameboard {
     private int rows; // Number of rows in the game board
     private int cols; // Number of columns in the game board
