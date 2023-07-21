@@ -1,4 +1,3 @@
-import java.awt.Color;
 
 public class GridCell {
     private int x; // X coordinate of the cell on the game board
