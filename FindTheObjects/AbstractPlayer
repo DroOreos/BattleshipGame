@@ -1,0 +1,66 @@
+
+
+public abstract class AbstractPlayer {
+
+    protected String name;
+    protected int hits;
+    protected int misses;
+    
+    protected int num_shipsAlive;
+    protected Ship[] ships = new Ship[5];
+    protected Gameboard game;
+
+    public AbstractPlayer(String name) {
+    	this.game = game;
+        this.name = name;
+        
+        this.hits = 0;
+        this.misses = 0;
+        initializeShips();
+    }
+
+    /**
+     * initialize one of each ship
+     */
+    private void initializeShips() {
+       // ships[0] = new AircraftCarrier();
+       // ships[1] = new Submarine();
+       // ships[2] = new Cruiser();
+       // ships[3] = new Destroyer();
+       // ships[4] = new Battleship();
+       // num_shipsAlive = 5;
+    }
+
+    /**
+     * Place ships randomly once you create an AI_player object
+     */
+    public abstract void placeShips();
+
+    /**
+     * 
+     */
+    public abstract void makeMoveGUI(Gameboard game);
+
+    /**
+     * player move on console
+     */
+    public abstract void makeMoveConsole(Gameboard game);
+
+    /**
+     * Used for console. checks if the move made is valid before updating the board.
+     * 
+     * @param ship
+     * @param row
+     * @param col
+     * @param isHorizontal
+     * @return
+     */
+    private abstract boolean isValidShipPlacement(Ship ship, int row, int col, boolean isHorizontal);
+
+    protected abstract int getNumShips();
+    
+    protected void updateStatusOfBoard(Gameboard game) {
+    	this.game = game;
+    }
+    
+}

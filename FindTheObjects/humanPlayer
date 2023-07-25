@@ -1,0 +1,187 @@
+
+import java.util.Scanner;
+
+public class humanPlayer extends AbstractPlayer {
+
+	private Scanner input = new Scanner(System.in);
+	private int num_shipsSunk;
+
+	/**
+	 * Constructor
+	 * 
+	 * @param game -
+	 */
+	public humanPlayer() {
+		super(" Human_player_bob ");
+		num_shipsSunk = 0;
+
+	}
+
+	/**
+	 * get the valid locations from the user to place the ship on the board
+	 */
+	@Override
+	public void placeShips() {
+		boolean validLocation;
+
+		for (Ship ship : ships) {
+			validLocation = false;
+			while (!validLocation) {
+
+				int row = getValidRowInput();
+				int col = getValidColumnInput();
+				boolean horizontal = getValidPlacementInput();
+
+				// Check if the placement on the board is valid
+				if (isValidShipPlacement(ship, row, col, horizontal)) {
+					game.placeShip(col, row, col, horizontal);
+					validLocation = true;
+				} else {
+					System.out.println("ERROR try another location;");
+
+				}
+			}
+		}
+	}
+
+	/**
+	 * Helper function for Place_ships(): get a valid row (A-J)
+	 * 
+	 * @return row
+	 */
+	private int getValidRowInput() {
+		boolean valid = false;
+		System.out.print("Enter row: (A-J): ");
+		int row = -1;
+
+		while (!valid) {
+
+			try {
+				String r_str = input.next();
+				char rowChar = r_str.toUpperCase().charAt(0);
+
+				row = rowChar - 'A' + 1;
+				if (row >= 0 && row <= 9) {
+					valid = true;
+				} else
+					System.out.print("Try Again. Enter Row: (A-J):");
+
+			} catch (Exception e) {
+				System.out.println("Invalid input. Please enter a valid row (A-J).");
+			}
+		}
+
+		return row;
+	}
+
+	/**
+	 * Helper function for Place_ships(): get a valid row integer (0-9)
+	 * 
+	 * @return column
+	 */
+	private int getValidColumnInput() {
+		boolean validInput = false;
+		int col = -1;
+		System.out.print("Enter column: (0-9): ");
+
+		// makes sure it is an integer.
+		while (!validInput) {
+			try {
+				col = input.nextInt();
+				if (col >= 0 && col <= 9) {
+					validInput = true;
+				} else
+					System.out.print("Try Again. Enter column: (0-9):");
+			} catch (Exception e) {
+				input.nextLine();
+				System.out.println("ERROR:Invalid input. Enter column: (0-9):");
+			}
+		}
+		return col;
+	}
+
+	/**
+	 * Helper function for placeShips(): get a valid boolean that tells us if it is
+	 * horizontal.
+	 * 
+	 * @return boolean
+	 */
+	private boolean getValidPlacementInput() {
+		boolean validInput = false;
+		System.out.print("Horizontal or Vertical? (H for horizontal, V for vertical) ");
+		String placement = null;
+
+		while (!validInput) {
+			try {
+				placement = input.next().toUpperCase();
+				if (placement.equals("H") || placement.equals("V")) {
+					validInput = true;
+				} else
+					System.out.print("Try Again. Horizontal or Vertical? (H for horizontal, V for vertical) ");
+
+			} catch (Exception e) {
+				input.nextLine();
+				System.out.println("Invalid input. Please enter H or V :.");
+			}
+		}
+
+		return placement.equals("H");
+	}
+
+	@Override
+	public void makeMoveGUI(Gameboard game_status) {
+		super.updateStatusOfBoard(game_status);
+
+	}
+
+	@Override
+	public void makeMoveConsole(Gameboard game_status) {
+		super.updateStatusOfBoard(game_status);
+
+	}
+
+	@Override
+	protected boolean isValidShipPlacement(Ship ship, int row, int col, boolean isHorizontal) {
+		int size = ship.getSize();
+
+		// Check if the placement will be inbound
+		if (row < 0 || col < 0 || row >= game.size || col >= game.size) {
+			return false;
+		}
+
+		// Check if anyOverlapping occurs
+		for (int i = 0; i < size; i++) {
+			if (isHorizontal) {
+				if (col + i >= game.size || game.containsShip(row, col + i)) {
+					return false;
+				}
+			} else {// vertical
+				if (row + i >= game.size || game.containsShip(row, col + i)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	protected int getNumShips() {
+		return super.num_shipsAlive;
+	}
+
+	public boolean hasWon() {
+		return num_shipsSunk == ships.length;
+	}
+
+	public int getShipsSunked(int r, int c) {
+		return this.num_shipsSunk;
+		
+		game.shoot(r,c);
+	}
+
+	public void setShipsSunked(int s) {
+		this.num_shipsSunk = s;
+	}
+
+}
