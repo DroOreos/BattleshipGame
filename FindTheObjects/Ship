@@ -1,0 +1,107 @@
+/*
+ * Lex Castaneda
+ * 
+ * This is the class I made for the ship. the method rotates will prob not be used in our console version.
+ * And drag will prob be used differently. It can be used whenever a user requests to move a ship. I also added 
+ * a getter for the coordinates in GridCell 
+ * 
+ */
+public class ship {
+
+	private GridCell[] gridCellArr;
+	private boolean state; //true ==alive , false== sunk
+	public boolean orenation; //true == upright , false == facing west
+	public int length; 
+	
+	
+	ship(GridCell[] arr){
+		this.gridCellArr = arr;
+		this.state = true;
+		this.orenation = true;
+		this.length = gridCellArr.length;
+		
+	}
+	/*
+	 * use this method to respond to a user click to rotate the ship
+	 * this method returns a GridCell arr so the board can update
+	 * the (x,y) represent the tip of the ship
+	 * 
+	 * For this to work i updated the GridCell class and made a getter for the coordinates
+	 */
+	public GridCell[] rotate() {
+		
+		int x = gridCellArr[0].getCoor()[0];
+		int y = gridCellArr[0].getCoor()[1];
+		
+		GridCell[] newArr = new GridCell[this.length];
+		if (this.orenation) {
+			for (int i = 0; i<gridCellArr.length; i++) {
+				GridCell shipCoor = new GridCell(x-i,y+i);
+				shipCoor.setState(gridCellArr[i].state);
+				newArr[i]=shipCoor;
+			}
+			this.orenation = false;
+		}
+		else {
+			for (int i = 0; i < gridCellArr.length; i++) {
+				GridCell shipCoor = new GridCell(x+i,y-i);
+				shipCoor.setState(gridCellArr[i].state);
+				newArr[i]=shipCoor;	
+			}
+			this.orenation = true;
+
+		}
+		
+		//change the current ship arr and return the GridCell array so the Gameboard class can update
+		this.gridCellArr = newArr;
+		return newArr;
+		
+	}
+	/*
+	 * use this method to respond to a user drag to move the ship
+	 * this method returns a GridCell arr so the board can update
+	 * the (x,y) represent the tip of the ship
+	 * 
+	 */
+	public GridCell[] drag(int x, int y) {
+		GridCell[] newArr = new GridCell[this.length];
+		if (this.orenation) {
+			for (int i = 0; i<gridCellArr.length; i++) {
+				GridCell shipCoor = new GridCell(x+i,y);
+				shipCoor.setState(gridCellArr[i].state);
+				newArr[i]=shipCoor;
+			}
+		}
+		else {
+			for (int i = 0; i < gridCellArr.length; i++) {
+				GridCell shipCoor = new GridCell(x,y+i);
+				shipCoor.setState(gridCellArr[i].state);
+				newArr[i]=shipCoor;
+			
+			}
+		}
+		
+		//change the current ship arr and return the GridCell array so the Gameboard class can update
+		this.gridCellArr = newArr;
+		return newArr;		
+	}
+		
+	
+	public boolean isAlive() {
+		for ( GridCell ship:gridCellArr ) {
+			if (ship.state != GridCell.CellState.HIT) 
+				return true;
+		}
+		setState(false);
+		return false;
+		
+	}
+	
+	public boolean getState(boolean newState) {
+		return this.state;
+	}
+
+	public void setState(boolean newState) {
+		this.state = newState;
+	}
+}
