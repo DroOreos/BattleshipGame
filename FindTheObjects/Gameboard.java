@@ -19,6 +19,7 @@ public class Gameboard {
 
     // Method to place a ship on the game board
     public void placeShip(int x, int y, int size, boolean isHorizontal) {
+        int size = 0;
         // Implement logic to place the ship on the grid
         // You may want to check if the placement is valid and handle overlapping ships
         // Update the states of the appropriate GridCell instances to represent the ship
