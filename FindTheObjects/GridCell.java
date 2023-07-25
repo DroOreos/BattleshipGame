@@ -18,6 +18,14 @@ public class GridCell {
         this.state = CellState.EMPTY; // Initialize the cell as empty by default
     }
 
+     public int[] getCoor(){
+		    	int[] returnArr = new int[2];
+		    	returnArr[0]= this.x;
+		    	returnArr[1]= this.y;
+		    	return returnArr;
+
+		    }
+
     // Getters and setters for the state
     public CellState getState() {
         return state;
