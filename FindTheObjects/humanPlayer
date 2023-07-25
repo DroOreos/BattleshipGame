@@ -135,8 +135,10 @@ public class humanPlayer extends AbstractPlayer {
 	}
 
 	@Override
-	public void makeMoveConsole(Gameboard game_status) {
+	public void makeMoveConsole(int r, int c, Gameboard game_status) {
 		super.updateStatusOfBoard(game_status);
+
+		game.shoot(r,c);
 
 	}
 
@@ -174,10 +176,8 @@ public class humanPlayer extends AbstractPlayer {
 		return num_shipsSunk == ships.length;
 	}
 
-	public int getShipsSunked(int r, int c) {
+	public int getShipsSunked() {
 		return this.num_shipsSunk;
-		
-		game.shoot(r,c);
 	}
 
 	public void setShipsSunked(int s) {
