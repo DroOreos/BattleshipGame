@@ -30,8 +30,11 @@ public class HumanPlayer extends AbstractPlayer {
 	
 	/**
 	 * Places the ships on the game board by getting valid locations from the user.
+	 * @param playerBoard 
 	 */
-	public void placeShipsConsole() {
+	public void placeShipsConsole(Gameboard playerBoard) {
+		this.updateStatusOfBoard(playerBoard);
+		
 		for (Ship ship : ships) {
             boolean validLocation = false;
             while (!validLocation) {
@@ -111,6 +114,10 @@ public class HumanPlayer extends AbstractPlayer {
 	public void setShipsSunked(int s) {
 		this.num_shipsSunk = s;
 	}
+
+
+
+	
 
 	/**
 	 * Helper function for Place_ships(): get a valid row (A-J)
@@ -193,7 +200,7 @@ public class HumanPlayer extends AbstractPlayer {
 			}
 		}
 
-		return placement.equals("H");
+		return placement.toUpperCase().equals("H");
 	}
 	
 }

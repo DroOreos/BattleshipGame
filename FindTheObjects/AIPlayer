@@ -1,0 +1,104 @@
+
+import java.util.Random;
+
+public class AIPlayerRandom extends AbstractPlayer implements AIStrategy{
+    Random random = new Random();
+    private int[] moveSet;
+    private int colMove;
+    private int rowMove;
+
+    public AIPlayerRandom(String name){
+        super(name);
+        
+    }
+
+    @Override
+    /**
+     * places ships randomly on the board 
+     */
+    public void placeShips(Gameboard game){
+    	super.updateOpponentBoard(game);
+        boolean validPlacement;
+
+        for(Ship ship : ships){
+            while (!validPlacement){
+                int row = random.nextInt(game.getRows());
+                int col = random.nextInt(game.getCols());
+                boolean isHorizontal = random.nextInt(1);
+                if (isValidShipPlacement(ship, row, col, isHorizontal)){
+                    game.placeShip(col, row, ship.length, isHorizontal);
+                    validPlacement = true;
+                }
+            }
+         }
+    }
+
+    @Override
+    public abstract void makeMoveGUI(Gameboard game){
+        updateOpponentBoard(game);
+    }
+
+
+    @Override
+	public boolean isValidShipPlacement(Ship ship, int row, int col, boolean isHorizontal) {
+		int size = ship.length;
+
+		// Check if the placement will be inbound
+		if (row < 0 || col < 0 || row >= game.getRow() || col >= game.getCol()) {
+			return false;
+		}
+
+		// Check if anyOverlapping occurs
+		for (int i = 0; i < size; i++) {
+			if (isHorizontal) {
+				if (col + i >= game.getCol() || game.containsShip(row, col + i)) {
+					return false;
+				}
+			} else {// vertical
+				if (row + i >= game.getRow() || game.containsShip(row, col + i)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+    @Override
+    public int[] getMove(Gameboard game){
+        this.rowMove = random.nextInt(game.getRows());
+        this.colMove = random.nextInt(game.getCols());
+        moveSet[0] = rowMove;
+        moveSet[1] = colMove;
+        return moveSet;
+    }
+
+    @Override
+    /**
+     * ignored r & c parameters for now and uses randomly generated row and col
+     */
+    public void makeMoveConsole(int r, int c, GameBoard game){
+        this.getMove(game);
+        while(!game.shoot(moveSet[0], moveSet[1])){
+            this.getMove(game);
+        }
+
+        updateOpponentBoard(game);
+    }
+
+    @Override
+    protected int getNumShips(){
+        return super.num_shipsAlive;
+    }
+
+    
+
+
+}
+
+public class AIPlayerNormal extends AbstractPlayer implements AIStrategy{
+    public AIPlayerNormal(){
+        super("AI Player");
+        
+    }
+}
