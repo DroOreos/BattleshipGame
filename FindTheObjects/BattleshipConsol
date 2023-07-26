@@ -73,7 +73,7 @@ public class BattleshipConsolGame {
         GridCell[][] gridBoard = playerBoard.getGrid();
 
         System.out.println("Your Board:");
-        System.out.print("  ");
+        System.out.print("\n");
         for (int col = 0; col < gridBoard[0].length; col++) {
             System.out.print(col + " ");
         }
@@ -84,7 +84,7 @@ public class BattleshipConsolGame {
             System.out.print(rowChar + " ");
             for (int col = 0; col < gridBoard[row].length; col++) {
                 GridCell.CellState state = gridBoard[row][col].getState();
-                char cellChar;
+                char cellChar = '~';
                 switch (state) {
                     case EMPTY:
                         cellChar = '~';
@@ -98,9 +98,7 @@ public class BattleshipConsolGame {
                     case MISS:
                         cellChar = 'M';
                         break;
-                    default:
-                        cellChar = '?'; // Unknown state
-                        break;
+
                 }
                 System.out.print(cellChar + " ");
             }
@@ -109,11 +107,15 @@ public class BattleshipConsolGame {
         }
     }
 
+    /**
+     * Print the ai board. should hide the ships but show Hit or Miss
+     * @param opponentBoard
+     */
     private static void printAIBoard(Gameboard opponentBoard) {
         GridCell[][] gridBoard = opponentBoard.getGrid();
 
         System.out.println("AI Board:");
-        System.out.print("  ");
+        System.out.print("\n");
         for (int col = 0; col < gridBoard[0].length; col++) {
             System.out.print(col + " ");
         }
@@ -125,9 +127,12 @@ public class BattleshipConsolGame {
             for (int col = 0; col < gridBoard[row].length; col++) {
                 GridCell.CellState state = gridBoard[row][col].getState();
                 char cellChar;
-                if (state == GridCell.CellState.HIT || state == GridCell.CellState.MISS) {
-                    cellChar = state == GridCell.CellState.HIT ? 'X' : 'O';
-                } else {
+                if (state == GridCell.CellState.HIT) {
+                    cellChar = 'H';
+                }else if(state == GridCell.CellState.MISS) {
+                	cellChar = 'M';
+                }else {
+       
                     cellChar = '~'; // Hide ships for AI board
                 }
                 System.out.print(cellChar + " ");
