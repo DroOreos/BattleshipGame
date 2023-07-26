@@ -1,4 +1,6 @@
+//Brandon Webb
 
+import java.util.ArrayList;
 
 public class Gameboard {
     private int rows; // Number of rows in the game board
@@ -20,34 +22,80 @@ public class Gameboard {
     }
 
     // Method to place a ship on the game board
-    public void placeShip(int x, int y, int size, boolean isHorizontal) {
-         size = 0;
-        // Implement logic to place the ship on the grid
-        // You may want to check if the placement is valid and handle overlapping ships
-        // Update the states of the appropriate GridCell instances to represent the ship
+    public boolean placeShip(int x, int y, int size, boolean isHorizontal) {
+        // Check if the placement is valid
+        if (x < 0 || y < 0 || x >= rows || y >= cols) {
+            return false; // Out of bounds
+        }
+
+        if (isHorizontal) {
+            if (y + size > cols) {
+                return false; // Exceeds the board width
+            }
+
+            for (int j = y; j < y + size; j++) {
+                if (grid[x][j].getState() == GridCell.CellState.SHIP) {
+                    return false; // Overlaps with an existing ship
+                }
+            }
+
+            // Place the ship horizontally
+            for (int j = y; j < y + size; j++) {
+                grid[x][j].setState(GridCell.CellState.SHIP);
+            }
+        } else {
+            if (x + size > rows) {
+                return false; // Exceeds the board height
+            }
+
+            for (int i = x; i < x + size; i++) {
+                if (grid[i][y].getState() == GridCell.CellState.SHIP) {
+                    return false; // Overlaps with an existing ship
+                }
+            }
+
+            // Place the ship vertically
+            for (int i = x; i < x + size; i++) {
+                grid[i][y].setState(GridCell.CellState.SHIP);
+            }
+        }
+
+        return true;
     }
 
     // Method to handle a shot at the specified cell coordinates (x, y)
-    public void shoot(int x, int y) {
-        // Implement logic to handle the shot and update the state of the targeted GridCell
-        // Determine if the shot was a hit or a miss
-        // Check if a ship is sunk after the shot and notify the player if necessary
+    public boolean shoot(int x, int y) {
+        // Check if the shot is valid
+        if (x < 0 || y < 0 || x >= rows || y >= cols) {
+            return false; // Out of bounds
+        }
+
+        GridCell cell = grid[x][y];
+        if (cell.getState() == GridCell.CellState.EMPTY || cell.getState() == GridCell.CellState.MISS) {
+            cell.setState(GridCell.CellState.MISS);
+            return true;
+        } else if (cell.getState() == GridCell.CellState.SHIP) {
+            cell.setState(GridCell.CellState.HIT);
+            return true;
+        }
+
+        return false; // Invalid shot (cell already hit or sunk ship)
     }
 
     // Method to check if the player has won the game
     public boolean hasPlayerWon() {
-        // Implement logic to check if all the ships on the game board have been sunk
-        // Return true if the player has won, false otherwise
-        return false;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (grid[i][j].getState() == GridCell.CellState.SHIP) {
+                    return false; // Not all ships are sunk, the player has not won yet
+                }
+            }
+        }
+        return true; // All ships are sunk, the player has won
     }
 
-    // Additional methods as needed, e.g., to retrieve the state of a specific cell
-    
-    public int getRow() {
-    	return this.rows;
+    // Getter for the grid variable
+    public GridCell[][] getGrid() {
+        return grid;
     }
-    public int getCol() {
-    	return this.cols;
-    }
-
 }
