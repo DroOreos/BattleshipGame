@@ -1,3 +1,4 @@
+
 import java.util.Scanner;
 
 /**
@@ -18,30 +19,36 @@ public class HumanPlayer extends AbstractPlayer {
 	}
 
 	/**
-	 * Places the ships on the game board by getting valid locations from the user.
+	 * Place the ships for the GUI version.
 	 */
 	@Override
 	public void placeShips() {
-		boolean validLocation;
-
+		
+		
+		
+	}
+	
+	/**
+	 * Places the ships on the game board by getting valid locations from the user.
+	 */
+	public void placeShipsConsole() {
 		for (Ship ship : ships) {
-			validLocation = false;
-			while (!validLocation) {
+            boolean validLocation = false;
+            while (!validLocation) {
 
-				int row = getValidRowInput();
-				int col = getValidColumnInput();
-				boolean horizontal = getHorizontalInput();
+                int row = getValidRowInput();
+                int col = getValidColumnInput();
+                boolean horizontal = getHorizontalInput();
+                
+                //if successfully placed ships, exit the while loop
+                validLocation = game.placeShip(col, row, ship.length, horizontal);
+                
+                if( !validLocation ) {
+                	System.out.println("Invalid Input.");
+                }
 
-				// Check if the placement on the board is valid Downwards or rightwards.
-				if (isValidShipPlacement(ship, row, col, horizontal)) {
-					game.placeShip(col, row, ship.length, horizontal);
-					validLocation = true;
-				} else {
-					System.out.println("ERROR try another location;");
-
-				}
-			}
-		}
+            }
+        }
 	}
 
 	/**
@@ -86,6 +93,7 @@ public class HumanPlayer extends AbstractPlayer {
 	 *
 	 * @return True if all of the human player's ships are sunk, false otherwise.
 	 */
+	@Override
 	public boolean hasWon() {
 		return num_shipsSunk == ships.length;
 	}
@@ -102,35 +110,6 @@ public class HumanPlayer extends AbstractPlayer {
 	 */
 	public void setShipsSunked(int s) {
 		this.num_shipsSunk = s;
-	}
-
-	/**
-	 * Once entered (x,y) coordinates we check if rest of the ship should be able to
-	 * fit downwards or rightWards.
-	 */
-	@Override
-	protected boolean isValidShipPlacement(Ship ship, int row, int col, boolean isHorizontal) {
-		int size = ship.length;
-
-		// Check if the placement will be inbound
-		if (row < 0 || col < 0 || row >= game.getRow() || col >= game.getCol()) {
-			return false;
-		}
-
-		// Check if anyOverlapping occurs
-		for (int i = 0; i < size; i++) {
-			if (isHorizontal) {
-				if (col + i >= game.getCol() || game.containsShip(row, col + i)) {
-					return false;
-				}
-			} else {// vertical
-				if (row + i >= game.getRow() || game.containsShip(row, col + i)) {
-					return false;
-				}
-			}
-		}
-
-		return true;
 	}
 
 	/**
@@ -216,5 +195,5 @@ public class HumanPlayer extends AbstractPlayer {
 
 		return placement.equals("H");
 	}
-
+	
 }
