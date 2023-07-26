@@ -9,13 +9,12 @@ public abstract class AbstractPlayer {
     protected int misses;
     
     protected int num_shipsAlive;
-    protected Ship[] ships = new Ship[5];
+    protected Ship[] ships = new Ship[1];
     
     protected Gameboard game; //place our ships here 
     protected Gameboard opponent_game; // send out attacks here
 
     public AbstractPlayer(String name) {
-    	this.game = game;
         this.name = name;
         
         this.hits = 0;
@@ -32,6 +31,10 @@ public abstract class AbstractPlayer {
        // ships[2] = new Cruiser();
        // ships[3] = new Destroyer();
        // ships[4] = new Battleship();
+    	
+    	for(int i = 0; i < 1; i++) {
+    		ships[i] = new MockSub();
+    	}
         num_shipsAlive = 5;
     }
 
@@ -51,7 +54,8 @@ public abstract class AbstractPlayer {
      * player move on console
      */
     public abstract void makeMoveConsole(int r, int c,Gameboard game);
-    
+
+
     /**
      * Gets the number of ships owned by the player.
      *
