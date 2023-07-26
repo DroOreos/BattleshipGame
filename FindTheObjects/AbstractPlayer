@@ -10,7 +10,9 @@ public abstract class AbstractPlayer {
     
     protected int num_shipsAlive;
     protected Ship[] ships = new Ship[5];
-    protected Gameboard game;
+    
+    protected Gameboard game; //place our ships here 
+    protected Gameboard opponent_game; // send out attacks here
 
     public AbstractPlayer(String name) {
     	this.game = game;
@@ -77,6 +79,18 @@ public abstract class AbstractPlayer {
      */
     protected void updateStatusOfBoard(Gameboard game) {
     	this.game = game;
+    }
+    
+    /**
+     * Updates the game board status for the opponent of the player. (mainly for attacks)
+     *
+     * @param game The current game board status.
+     */
+    protected void updateOpponentBoard(Gameboard game) {
+    	this.opponent_game = game;
+    }
+    public String getName() {
+    	return this.name;
     }
     
 }
