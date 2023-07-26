@@ -1,5 +1,7 @@
 
-
+/**
+ * An abstract class representing a player in the Battleship game.
+ */
 public abstract class AbstractPlayer {
 
     protected String name;
@@ -28,37 +30,51 @@ public abstract class AbstractPlayer {
        // ships[2] = new Cruiser();
        // ships[3] = new Destroyer();
        // ships[4] = new Battleship();
-       // num_shipsAlive = 5;
+        num_shipsAlive = 5;
     }
 
     /**
-     * Place ships randomly once you create an AI_player object
+     * Place ships randomly once you create an AI_player object. or humanPlayer manually places ships 
      */
     public abstract void placeShips();
 
     /**
-     * 
+     * Makes a move on the game board in the GUI version of the game.
+     *
+     * @param game The current game board status.
      */
     public abstract void makeMoveGUI(Gameboard game);
 
     /**
      * player move on console
      */
-    public abstract void makeMoveConsole(Gameboard game);
+    public abstract void makeMoveConsole(int r, int c,Gameboard game);
+
 
     /**
-     * Used for console. checks if the move made is valid before updating the board.
-     * 
-     * @param ship
-     * @param row
-     * @param col
-     * @param isHorizontal
-     * @return
+     * Checks if a ship placement is valid.
+     * This method should be implemented by the subclasses to validate ship placement rules.
+     *
+     * @param ship        The ship to be placed.
+     * @param row         The row number of the starting location.
+     * @param col         The column number of the starting location.
+     * @param isHorizontal True if the ship should be placed horizontally, false if vertically.
+     * @return True if the placement is valid, false otherwise.
      */
-    private abstract boolean isValidShipPlacement(Ship ship, int row, int col, boolean isHorizontal);
+    protected abstract boolean isValidShipPlacement(Ship ship, int row, int col, boolean isHorizontal);
 
+    /**
+     * Gets the number of ships owned by the player.
+     *
+     * @return The number of ships remaining.
+     */
     protected abstract int getNumShips();
     
+    /**
+     * Updates the game board status for the player.
+     *
+     * @param game The current game board status.
+     */
     protected void updateStatusOfBoard(Gameboard game) {
     	this.game = game;
     }

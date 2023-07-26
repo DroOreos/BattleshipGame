@@ -1,3 +1,5 @@
+
+
 public class Gameboard {
     private int rows; // Number of rows in the game board
     private int cols; // Number of columns in the game board
@@ -19,7 +21,7 @@ public class Gameboard {
 
     // Method to place a ship on the game board
     public void placeShip(int x, int y, int size, boolean isHorizontal) {
-        int size = 0;
+         size = 0;
         // Implement logic to place the ship on the grid
         // You may want to check if the placement is valid and handle overlapping ships
         // Update the states of the appropriate GridCell instances to represent the ship
@@ -40,4 +42,12 @@ public class Gameboard {
     }
 
     // Additional methods as needed, e.g., to retrieve the state of a specific cell
+    
+    public int getRow() {
+    	return this.rows;
+    }
+    public int getCol() {
+    	return this.cols;
+    }
+
 }
