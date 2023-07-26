@@ -1,0 +1,94 @@
+
+public class BattleshipConsolGame {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Step 1: Set up the game
+        int rows = 10; 
+        int cols = 10;
+        Gameboard playerBoard = new Gameboard(rows, cols);
+        Gameboard opponentBoard = new Gameboard(rows, cols);
+     
+
+        // Step 2: Place ships for the human player
+        AbstractPlayer humanPlayer = new HumanPlayer("Player 1 bob"); 
+        humanPlayer.placeShips();
+
+        // Step 3: Place ships for the AI player (random placement)
+        AbstractPlayer aiPlayer = new AIPlayer("AI Player");
+        aiPlayer.placeShips();
+
+        // Step 4: Game starts here:
+        boolean isGameOver = false;
+
+        while ( !isGameOver ) {
+        	
+            // Player's goes first.
+            System.out.println("Enter coordinates (row, col) to shoot: ");
+            int row = getValidInput("Row (A-J): ", scanner);
+            int col = getValidInput("Column (0-9): ", scanner);
+
+            // Make player move and update the boards
+            humanPlayer.makeMoveConsole(row, col, opponentBoard);
+
+            
+            //PRINT THE BOARD HERE:
+            System.out.println( opponentBoard.toString() ); //hide the locations of the ships for the ai.
+            System.out.println( playerBoard.toString() );
+            
+            // Check if the player has won
+            if (((HumanPlayer) humanPlayer).hasWon() ) {
+                System.out.println(humanPlayer.getName() + " won!");
+                isGameOver = true;
+                break;
+            }
+
+            // AI's turn 
+            //aiPlayer.makeMoveConsole(); or aiPlayer.makeRandMove();
+            
+            //PRINT THE BOARD HERE:
+            System.out.println( opponentBoard.toString() ); //hide the locations of the ships for the ai.
+            System.out.println( playerBoard.toString() );
+            
+            
+            // Check if the AI has won
+            if (((AIPlayer) aiPlayer).hasWon()) {
+                System.out.println("AI Player won!");
+                isGameOver = true;
+                break;
+            }
+        }
+
+        // Step 5: Game ended
+        scanner.close();
+    }
+
+    // Helper method to get valid input from the user
+    private static int getValidInput(String msg, Scanner scan) {
+    	
+    	boolean validInput = false;
+        System.out.print(msg);
+    	int row = -1;
+    	
+        while ( !validInput ) {
+            try {
+            	
+                String input = scan.nextLine().toUpperCase();
+                
+                char rowChar = input.charAt(0);
+                row = rowChar - 'A';
+                int col = Integer.parseInt(input.substring(1));
+
+                if (row >= 0 && row < 10 && col >= 0 && col < 10) {
+                    validInput = true;
+                } else {
+                    System.out.println("Invalid input. " + msg);
+                }
+            } catch (Exception e) {
+                System.out.println("Invalid input. " + msg);
+            }
+        }
+        return row;
+    }
+}

@@ -1,10 +1,9 @@
-
 import java.util.Scanner;
 
 /**
  * Represents a human player in the Battleship game.
  */
-public class humanPlayer extends AbstractPlayer {
+public class HumanPlayer extends AbstractPlayer {
 
 	private Scanner input = new Scanner(System.in);
 	private int num_shipsSunk;
@@ -12,8 +11,8 @@ public class humanPlayer extends AbstractPlayer {
 	/**
 	 * Constructor
 	 */
-	public humanPlayer() {
-		super(" Human_player_bob ");
+	public HumanPlayer(String name) {
+		super(name);
 		num_shipsSunk = 0;
 
 	}
@@ -52,7 +51,7 @@ public class humanPlayer extends AbstractPlayer {
 	 */
 	@Override
 	public void makeMoveGUI(Gameboard game_status) {
-		super.updateStatusOfBoard(game_status);
+		super.updateOpponentBoard(game_status);
 
 	}
 
@@ -66,9 +65,9 @@ public class humanPlayer extends AbstractPlayer {
 	 */
 	@Override
 	public void makeMoveConsole(int r, int c, Gameboard game_status) {
-		super.updateStatusOfBoard(game_status);
+		super.updateOpponentBoard(game_status);
 
-		game.shoot(r,c);
+		game_status.shoot(r,c);
 
 	}
 	
