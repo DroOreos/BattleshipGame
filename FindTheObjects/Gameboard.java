@@ -98,4 +98,12 @@ public class Gameboard {
     public GridCell[][] getGrid() {
         return grid;
     }
+
+    public int getRows(){
+        return this.rows;
+    }
+
+    public int getCols(){
+        return this.cols;
+    }
 }
