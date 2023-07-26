@@ -51,20 +51,7 @@ public abstract class AbstractPlayer {
      * player move on console
      */
     public abstract void makeMoveConsole(int r, int c,Gameboard game);
-
-
-    /**
-     * Checks if a ship placement is valid.
-     * This method should be implemented by the subclasses to validate ship placement rules.
-     *
-     * @param ship        The ship to be placed.
-     * @param row         The row number of the starting location.
-     * @param col         The column number of the starting location.
-     * @param isHorizontal True if the ship should be placed horizontally, false if vertically.
-     * @return True if the placement is valid, false otherwise.
-     */
-    protected abstract boolean isValidShipPlacement(Ship ship, int row, int col, boolean isHorizontal);
-
+    
     /**
      * Gets the number of ships owned by the player.
      *
@@ -80,6 +67,7 @@ public abstract class AbstractPlayer {
     protected void updateStatusOfBoard(Gameboard game) {
     	this.game = game;
     }
+    public abstract boolean hasWon(); 
     
     /**
      * Updates the game board status for the opponent of the player. (mainly for attacks)

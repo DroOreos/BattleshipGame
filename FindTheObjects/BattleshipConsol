@@ -11,13 +11,14 @@ public class BattleshipConsolGame {
         Gameboard opponentBoard = new Gameboard(rows, cols);
      
 
-        // Step 2: Place ships for the human player
+     // Step 2: Place ships for the human player
         AbstractPlayer humanPlayer = new HumanPlayer("Player 1 bob"); 
-        humanPlayer.placeShips();
+        ((HumanPlayer) humanPlayer).placeShipsConsole(); // cast down
+
 
         // Step 3: Place ships for the AI player (random placement)
         AbstractPlayer aiPlayer = new AIPlayer("AI Player");
-        aiPlayer.placeShips();
+        ((AIPlayer) aiPlayer).placeShips();
 
         // Step 4: Game starts here:
         boolean isGameOver = false;
@@ -32,28 +33,28 @@ public class BattleshipConsolGame {
             // Make player move and update the boards
             humanPlayer.makeMoveConsole(row, col, opponentBoard);
 
-            
             //PRINT THE BOARD HERE:
-            System.out.println( opponentBoard.toString() ); //hide the locations of the ships for the ai.
-            System.out.println( playerBoard.toString() );
+            printAIBoard(opponentBoard);
+            printPlayerBoard(playerBoard);
             
+         
             // Check if the player has won
-            if (((HumanPlayer) humanPlayer).hasWon() ) {
+            if ( humanPlayer.hasWon() ) {
                 System.out.println(humanPlayer.getName() + " won!");
                 isGameOver = true;
                 break;
             }
 
             // AI's turn 
-            //aiPlayer.makeMoveConsole(); or aiPlayer.makeRandMove();
+            aiPlayer.makeMoveConsole(); //or aiPlayer.makeMove();
             
             //PRINT THE BOARD HERE:
-            System.out.println( opponentBoard.toString() ); //hide the locations of the ships for the ai.
-            System.out.println( playerBoard.toString() );
+            printAIBoard(opponentBoard);
+            printPlayerBoard(playerBoard);
             
             
             // Check if the AI has won
-            if (((AIPlayer) aiPlayer).hasWon()) {
+            if (aiPlayer.hasWon()) {
                 System.out.println("AI Player won!");
                 isGameOver = true;
                 break;
@@ -64,7 +65,80 @@ public class BattleshipConsolGame {
         scanner.close();
     }
 
-    // Helper method to get valid input from the user
+    /**
+     * Print the player board to console. Should print ships location, hits and missed from ai
+     * @param playerBoard
+     */
+    private static void printPlayerBoard(Gameboard playerBoard) {
+        GridCell[][] gridBoard = playerBoard.getGrid();
+
+        System.out.println("Your Board:");
+        System.out.print("  ");
+        for (int col = 0; col < gridBoard[0].length; col++) {
+            System.out.print(col + " ");
+        }
+        System.out.println();
+
+        char rowChar = 'A';
+        for (int row = 0; row < gridBoard.length; row++) {
+            System.out.print(rowChar + " ");
+            for (int col = 0; col < gridBoard[row].length; col++) {
+                GridCell.CellState state = gridBoard[row][col].getState();
+                char cellChar;
+                switch (state) {
+                    case EMPTY:
+                        cellChar = '~';
+                        break;
+                    case SHIP:
+                        cellChar = 'S';
+                        break;
+                    case HIT:
+                        cellChar = 'H';
+                        break;
+                    case MISS:
+                        cellChar = 'M';
+                        break;
+                    default:
+                        cellChar = '?'; // Unknown state
+                        break;
+                }
+                System.out.print(cellChar + " ");
+            }
+            System.out.println();
+            rowChar++;
+        }
+    }
+
+    private static void printAIBoard(Gameboard opponentBoard) {
+        GridCell[][] gridBoard = opponentBoard.getGrid();
+
+        System.out.println("AI Board:");
+        System.out.print("  ");
+        for (int col = 0; col < gridBoard[0].length; col++) {
+            System.out.print(col + " ");
+        }
+        System.out.println();
+
+        char rowChar = 'A';
+        for (int row = 0; row < gridBoard.length; row++) {
+            System.out.print(rowChar + " ");
+            for (int col = 0; col < gridBoard[row].length; col++) {
+                GridCell.CellState state = gridBoard[row][col].getState();
+                char cellChar;
+                if (state == GridCell.CellState.HIT || state == GridCell.CellState.MISS) {
+                    cellChar = state == GridCell.CellState.HIT ? 'X' : 'O';
+                } else {
+                    cellChar = '~'; // Hide ships for AI board
+                }
+                System.out.print(cellChar + " ");
+            }
+            System.out.println();
+            rowChar++;
+        }
+    }
+
+
+	// Helper method to get valid input from the user
     private static int getValidInput(String msg, Scanner scan) {
     	
     	boolean validInput = false;
@@ -91,4 +165,5 @@ public class BattleshipConsolGame {
         }
         return row;
     }
+    
 }
