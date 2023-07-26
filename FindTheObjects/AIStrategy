@@ -1,0 +1,4 @@
+public interface AIStrategy{
+
+    public int[] getMove(Gameboard game);
+}
