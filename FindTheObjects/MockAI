@@ -1,0 +1,62 @@
+
+import java.util.Random;
+
+/**
+ * Needed to run the console game.
+ */
+public class MockAI extends AbstractPlayer {
+
+    private Random rand = new Random();
+    private int num_shipsSunk;
+    private int rows;
+    private int cols;
+
+    public MockAI(String name, int rows, int cols) {
+        super(name);
+        num_shipsSunk = 0;
+        this.rows = rows;
+        this.cols = cols;
+    }
+
+    @Override
+    public void placeShips(Gameboard opponentBoard) {
+    	this.updateOpponentBoard(opponentBoard);
+    	
+        for (Ship ship : ships) {
+            boolean validLocation = false;
+            while (!validLocation) {
+                int row = rand.nextInt(rows);
+                int col = rand.nextInt(cols);
+                boolean horizontal = rand.nextBoolean();
+
+                // If successfully placed ships, exit the while loop
+                validLocation = opponent_game.placeShip(col, row, ship.length, horizontal);
+            }
+        }
+    }
+
+    @Override
+    public void makeMoveGUI() {
+        // Implement GUI version of making a move for the mock AI (e.g., random move)
+        int row = rand.nextInt(rows);
+        int col = rand.nextInt(cols);
+        makeMoveConsole(row, col);
+    }
+
+    @Override
+    public void makeMoveConsole(int r, int c) {
+        // Implement console version of making a move for the mock AI (e.g., random move)
+        game.shoot(r, c);
+    }
+
+    @Override
+    public int getNumShips() {
+        return super.num_shipsAlive;
+    }
+
+    @Override
+    public boolean hasWon() {
+        return num_shipsSunk == ships.length;
+    }
+
+}

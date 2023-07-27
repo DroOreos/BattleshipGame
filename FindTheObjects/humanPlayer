@@ -1,4 +1,5 @@
 
+
 import java.util.Scanner;
 
 /**
@@ -22,8 +23,8 @@ public class HumanPlayer extends AbstractPlayer {
 	 * Place the ships for the GUI version.
 	 */
 	@Override
-	public void placeShips() {
-		
+	public void placeShips(Gameboard game) {
+		this.updateStatusOfBoard(game);
 		
 		
 	}
@@ -34,23 +35,25 @@ public class HumanPlayer extends AbstractPlayer {
 	 */
 	public void placeShipsConsole(Gameboard playerBoard) {
 		this.updateStatusOfBoard(playerBoard);
-		
+		int i = 1;
 		for (Ship ship : ships) {
             boolean validLocation = false;
             while (!validLocation) {
+            		
+            	System.out.println("Place Ship# " + i);
 
                 int row = getValidRowInput();
                 int col = getValidColumnInput();
                 boolean horizontal = getHorizontalInput();
                 
                 //if successfully placed ships, exit the while loop
-                validLocation = game.placeShip(col, row, ship.length, horizontal);
+                validLocation = game.placeShip(row, col, ship.length, horizontal);
                 
                 if( !validLocation ) {
                 	System.out.println("Invalid Input.");
                 }
 
-            }
+            } i++;
         }
 	}
 
@@ -60,8 +63,8 @@ public class HumanPlayer extends AbstractPlayer {
 	 * @param game_status The current game board status.
 	 */
 	@Override
-	public void makeMoveGUI(Gameboard game_status) {
-		super.updateOpponentBoard(game_status);
+	public void makeMoveGUI() {
+		//super.updateOpponentBoard(game_status);
 
 	}
 
@@ -74,10 +77,10 @@ public class HumanPlayer extends AbstractPlayer {
 	 * @param game_status The current game board status.
 	 */
 	@Override
-	public void makeMoveConsole(int r, int c, Gameboard game_status) {
-		super.updateOpponentBoard(game_status);
+	public void makeMoveConsole(int r, int c) {
+		//super.updateOpponentBoard(game_status);
 
-		game_status.shoot(r,c);
+		opponent_game.shoot(r,c);
 
 	}
 	
@@ -135,7 +138,7 @@ public class HumanPlayer extends AbstractPlayer {
 				String r_str = input.next();
 				char rowChar = r_str.toUpperCase().charAt(0);
 
-				row = rowChar - 'A' + 1;
+				row = rowChar - 'A';
 				if (row >= 0 && row <= 9) {
 					valid = true;
 				} else

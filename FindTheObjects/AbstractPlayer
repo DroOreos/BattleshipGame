@@ -21,6 +21,11 @@ public abstract class AbstractPlayer {
         this.misses = 0;
         initializeShips();
     }
+    
+    public void updateAllGameboards(Gameboard a, Gameboard b) {
+    	this.game = a;
+    	this.opponent_game = b;
+    }
 
     /**
      * initialize one of each ship
@@ -33,7 +38,7 @@ public abstract class AbstractPlayer {
        // ships[4] = new Battleship();
     	
     	for(int i = 0; i < 1; i++) {
-    		ships[i] = new MockSub();
+    		ships[i] = new mockSub(3);
     	}
         num_shipsAlive = 5;
     }
@@ -41,19 +46,19 @@ public abstract class AbstractPlayer {
     /**
      * Place ships randomly once you create an AI_player object. or humanPlayer manually places ships 
      */
-    public abstract void placeShips();
+    public abstract void placeShips(Gameboard g);
 
     /**
      * Makes a move on the game board in the GUI version of the game.
      *
      * @param game The current game board status.
      */
-    public abstract void makeMoveGUI(Gameboard game);
+    public abstract void makeMoveGUI();
 
     /**
      * player move on console
      */
-    public abstract void makeMoveConsole(int r, int c,Gameboard game);
+    public abstract void makeMoveConsole(int r, int c);
 
 
     /**

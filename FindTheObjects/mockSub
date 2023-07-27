@@ -1,0 +1,14 @@
+
+
+/**
+ * Needed to run the console game.
+ */
+public class mockSub extends Ship {
+
+	public String name = "Submarine";
+ 
+    public mockSub(int size) {
+        super(size); 
+    }
+
+}

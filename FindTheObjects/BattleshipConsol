@@ -1,174 +1,187 @@
 
+import java.util.Scanner;
+import java.util.Random;
+
 public class BattleshipConsolGame {
+	private static Random random = new Random();
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
 
-        // Step 1: Set up the game
-        int rows = 10; 
-        int cols = 10;
-        Gameboard playerBoard = new Gameboard(rows, cols);
-        Gameboard opponentBoard = new Gameboard(rows, cols);
-     
+		// Step 1: Set up the game
+		int rows = 10;
+		int cols = 10;
+		Gameboard playerBoard = new Gameboard(rows, cols);
+		Gameboard opponentBoard = new Gameboard(rows, cols);
 
-     // Step 2: Place ships for the human player
-        AbstractPlayer humanPlayer = new HumanPlayer("Player 1 bob"); 
-        ((HumanPlayer) humanPlayer).placeShipsConsole(); // cast down
+		// Step 2: Place ships for the human player
+		AbstractPlayer humanPlayer = new HumanPlayer("Player 1 bob");
+		humanPlayer.updateAllGameboards(playerBoard, opponentBoard);
 
+		((HumanPlayer) humanPlayer).placeShipsConsole(playerBoard); // cast down
 
-        // Step 3: Place ships for the AI player (random placement)
-        AbstractPlayer aiPlayer = new AIPlayer("AI Player");
-        ((AIPlayer) aiPlayer).placeShips();
+		// Step 3: Place ships for the AI player (random placement)
+		// AbstractPlayer aiPlayer = new AIPlayerRandom("AI Player");
+		// aiPlayer.updateAllGameboards(playerBoard, opponentBoard);
 
-        // Step 4: Game starts here:
-        boolean isGameOver = false;
+		// ((AIPlayerRandom) aiPlayer).placeShips(opponentBoard);
 
-        while ( !isGameOver ) {
-        	
-            // Player's goes first.
-            System.out.println("Enter coordinates (row, col) to shoot: ");
-            int row = getValidInput("Row (A-J): ", scanner);
-            int col = getValidInput("Column (0-9): ", scanner);
+		//Using the mock AI Player
+		AbstractPlayer aiPlayer = new MockAI("AI Player", rows, cols);			
+		aiPlayer.updateAllGameboards(playerBoard,opponentBoard);
+		((MockAI) aiPlayer).placeShips(opponentBoard);
 
-            // Make player move and update the boards
-            humanPlayer.makeMoveConsole(row, col, opponentBoard);
+		
+		// Step 4: Game starts here:
+		boolean isGameOver = false;
 
-            //PRINT THE BOARD HERE:
-            printAIBoard(opponentBoard);
-            printPlayerBoard(playerBoard);
-            
-         
-            // Check if the player has won
-            if ( humanPlayer.hasWon() ) {
-                System.out.println(humanPlayer.getName() + " won!");
-                isGameOver = true;
-                break;
-            }
+		while (!isGameOver) {
 
-            // AI's turn 
-            aiPlayer.makeMoveConsole(); //or aiPlayer.makeMove();
-            
-            //PRINT THE BOARD HERE:
-            printAIBoard(opponentBoard);
-            printPlayerBoard(playerBoard);
-            
-            
-            // Check if the AI has won
-            if (aiPlayer.hasWon()) {
-                System.out.println("AI Player won!");
-                isGameOver = true;
-                break;
-            }
-        }
+			// Player's goes first.
+			String input;
+			int row,col = -1;
 
-        // Step 5: Game ended
-        scanner.close();
-    }
-
-    /**
-     * Print the player board to console. Should print ships location, hits and missed from ai
-     * @param playerBoard
-     */
-    private static void printPlayerBoard(Gameboard playerBoard) {
-        GridCell[][] gridBoard = playerBoard.getGrid();
-
-        System.out.println("Your Board:");
-        System.out.print("\n");
-        for (int col = 0; col < gridBoard[0].length; col++) {
-            System.out.print(col + " ");
-        }
-        System.out.println();
-
-        char rowChar = 'A';
-        for (int row = 0; row < gridBoard.length; row++) {
-            System.out.print(rowChar + " ");
-            for (int col = 0; col < gridBoard[row].length; col++) {
-                GridCell.CellState state = gridBoard[row][col].getState();
-                char cellChar = '~';
-                switch (state) {
-                    case EMPTY:
-                        cellChar = '~';
-                        break;
-                    case SHIP:
-                        cellChar = 'S';
-                        break;
-                    case HIT:
-                        cellChar = 'H';
-                        break;
-                    case MISS:
-                        cellChar = 'M';
-                        break;
-
-                }
-                System.out.print(cellChar + " ");
-            }
-            System.out.println();
-            rowChar++;
-        }
-    }
-
-    /**
-     * Print the ai board. should hide the ships but show Hit or Miss
-     * @param opponentBoard
-     */
-    private static void printAIBoard(Gameboard opponentBoard) {
-        GridCell[][] gridBoard = opponentBoard.getGrid();
-
-        System.out.println("AI Board:");
-        System.out.print("\n");
-        for (int col = 0; col < gridBoard[0].length; col++) {
-            System.out.print(col + " ");
-        }
-        System.out.println();
-
-        char rowChar = 'A';
-        for (int row = 0; row < gridBoard.length; row++) {
-            System.out.print(rowChar + " ");
-            for (int col = 0; col < gridBoard[row].length; col++) {
-                GridCell.CellState state = gridBoard[row][col].getState();
-                char cellChar;
-                if (state == GridCell.CellState.HIT) {
-                    cellChar = 'H';
-                }else if(state == GridCell.CellState.MISS) {
-                	cellChar = 'M';
-                }else {
-       
-                    cellChar = '~'; // Hide ships for AI board
-                }
-                System.out.print(cellChar + " ");
-            }
-            System.out.println();
-            rowChar++;
-        }
-    }
+			do {
+				System.out.println("Enter coordinates to shoot: (row, col)");
+				input = scanner.nextLine();
+				row = getRow(input);
+				col = getCol(input);
+			} while (row == -1 || col == -1);
+			
+			
+			// Make player move and update the boards
+			humanPlayer.makeMoveConsole(row, col);
+			humanPlayer.updateAllGameboards(playerBoard, opponentBoard);
 
 
-	// Helper method to get valid input from the user
-    private static int getValidInput(String msg, Scanner scan) {
-    	
-    	boolean validInput = false;
-        System.out.print(msg);
-    	int row = -1;
-    	
-        while ( !validInput ) {
-            try {
-            	
-                String input = scan.nextLine().toUpperCase();
-                
-                char rowChar = input.charAt(0);
-                row = rowChar - 'A';
-                int col = Integer.parseInt(input.substring(1));
+			// Check if the player has won
+			if (humanPlayer.hasWon()) {
+				System.out.println(humanPlayer.getName() + " won!");
+				isGameOver = true;
+				break;
+			}
 
-                if (row >= 0 && row < 10 && col >= 0 && col < 10) {
-                    validInput = true;
-                } else {
-                    System.out.println("Invalid input. " + msg);
-                }
-            } catch (Exception e) {
-                System.out.println("Invalid input. " + msg);
-            }
-        }
-        return row;
-    }
-    
+			// AI's turn
+			aiPlayer.makeMoveConsole(random.nextInt(rows), random.nextInt(cols));
+			aiPlayer.updateAllGameboards(playerBoard,opponentBoard);
+
+			// PRINT THE BOARD HERE:
+			printAIBoard(opponentBoard);
+			printPlayerBoard(playerBoard);
+
+			// Check if the AI has won
+			if (aiPlayer.hasWon()) {
+				System.out.println("AI Player won!");
+				isGameOver = true;
+				break;
+			}
+		}
+
+		// Step 5: Game ended
+		scanner.close();
+	}
+
+	/**
+	 * Print the player board to console. Should print ships location, hits and
+	 * missed from ai
+	 * 
+	 * @param playerBoard
+	 */
+	private static void printPlayerBoard(Gameboard playerBoard) {
+		GridCell[][] gridBoard = playerBoard.getGrid();
+
+		System.out.println("\nYour Board:");
+		System.out.print("  ");
+		for (int col = 0; col < gridBoard[0].length; col++) {
+			System.out.print(col + " ");
+		}
+		System.out.println();
+
+		char rowChar = 'A';
+		for (int row = 0; row < gridBoard.length; row++) {
+			System.out.print(rowChar + " ");
+			for (int col = 0; col < gridBoard[row].length; col++) {
+				GridCell.CellState state = gridBoard[row][col].getState();
+				char cellChar = '~';
+				switch (state) {
+				case EMPTY:
+					cellChar = '~';
+					break;
+				case SHIP:
+					cellChar = 'S';
+					break;
+				case HIT:
+					cellChar = 'H';
+					break;
+				case MISS:
+					cellChar = 'M';
+					break;
+
+				}
+				System.out.print(cellChar + " ");
+			}
+			System.out.println();
+			rowChar++;
+		}
+	}
+
+	/**
+	 * Print the ai board. should hide the ships but show Hit or Miss
+	 * 
+	 * @param opponentBoard
+	 */
+	private static void printAIBoard(Gameboard opponentBoard) {
+		GridCell[][] gridBoard = opponentBoard.getGrid();
+
+		System.out.println("\nAI Board:");
+		System.out.print("  ");
+		for (int col = 0; col < gridBoard[0].length; col++) {
+			System.out.print(col + " ");
+		}
+		System.out.println();
+
+		char rowChar = 'A';
+		for (int row = 0; row < gridBoard.length; row++) {
+			System.out.print(rowChar + " ");
+			for (int col = 0; col < gridBoard[row].length; col++) {
+				GridCell.CellState state = gridBoard[row][col].getState();
+				char cellChar;
+				if (state == GridCell.CellState.HIT) {
+					cellChar = 'H';
+				} else if (state == GridCell.CellState.MISS) {
+					cellChar = 'M';
+				} else {
+
+					cellChar = '~'; // Hide ships for AI board
+				}
+				System.out.print(cellChar + " ");
+			}
+			System.out.println();
+			rowChar++;
+		}
+	}
+
+	private static int getRow(String input) {
+		String[] parts = input.split("\\s+");
+		char row_c = parts[0].toUpperCase().charAt(0);
+		int value = row_c - 'A';
+
+		return inputValidation(value);
+	}
+
+	private static int getCol(String input) {
+		String[] parts = input.split("\\s+");
+		int col = Integer.parseInt(parts[1]);
+
+		return inputValidation(col);
+	}
+
+	private static int inputValidation(int value) {
+
+		if(value >= 0 && value <= 9) {
+			return value;
+		}
+		
+		return -1;
+	}
 }
