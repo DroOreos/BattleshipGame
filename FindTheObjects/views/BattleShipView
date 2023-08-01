@@ -1,0 +1,287 @@
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.stage.Stage;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.input.MouseEvent;
+import javafx.animation.PathTransition;
+import javafx.util.Duration;
+import model.GridCell;
+
+import java.lang.reflect.Array;
+import java.net.MalformedURLException;
+import java.net.URL;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.shape.Path;
+
+//import import javafx.scene.
+
+public class BattleShipView extends BorderPane {
+
+//	private theBattleShipGame theGame;
+	private Image waterCell_Image;
+	private ImageView rocket_Image;
+	private Image hit_Image;
+	private Image miss_Image;
+
+
+	private static final int BOARD_WIDTH = 500; // 50 pixels per cell * 10 columns
+	private static final int BOARD_HEIGHT = 300; // 30 pixels per cell * 10 rows
+	private static final int BOARD_ROWS = 10;
+	private static final int BOARD_COLS = 10;
+	private static final int CELL_WIDTH = BOARD_WIDTH / BOARD_COLS;
+	private static final int CELL_HEIGHT = BOARD_HEIGHT / BOARD_ROWS;
+
+	// 0 --> 9
+	private int location_x;
+	private int location_y;
+
+	// pixels of the location
+	private int rowCell_coordinate;
+	private int colCell_coordinate;
+
+	Pane opponentPane;
+
+	private static final double rocketX = 0;
+	private static final double rocketY = 500;
+
+	private Canvas playerBoardCanvas = new Canvas(BOARD_WIDTH, BOARD_HEIGHT);
+	private Canvas opponentBoardCanvas = new Canvas(BOARD_WIDTH, BOARD_HEIGHT);
+
+	private Array player_grid[][];
+	private Array opponent_grid[][];
+
+	/**
+	 * Constructor
+	 * 
+	 * @param theGame - current state of the battleship game
+	 * @throws MalformedURLException
+	 */
+//	public BattleShipView(BattleShipGame theGame) {
+//		this.theGame = theGame;	
+//	}
+	public BattleShipView() {
+
+		initializeBackround();
+
+		player_grid = new Array[BOARD_ROWS][BOARD_COLS];
+		opponent_grid = new Array[BOARD_ROWS][BOARD_COLS];
+
+		initializeAllPanel();
+
+		initializeImages();
+
+		initializeRocket();
+
+		handlers();
+	}
+
+	private void initializeImages() {
+		try {
+
+			GraphicsContext gc = playerBoardCanvas.getGraphicsContext2D();
+			URL hit = new URL("https://image.pngaaa.com/588/355588-middle.png");
+			hit_Image = new Image(hit.toString());
+
+			// getCellPixels(0,0);
+			// gc.drawImage(hit_Image, rowCell_coordinate, colCell_coordinate, CELL_WIDTH,
+			// CELL_HEIGHT);
+
+			URL miss = new URL(
+					"https://c4.wallpaperflare.com/wallpaper/965/883/624/manga-one-piece-wallpaper-preview.jpg");
+			miss_Image = new Image(miss.toString());
+
+			// getCellPixels(9,9);
+			// gc.drawImage(miss_Image, rowCell_coordinate, colCell_coordinate, CELL_WIDTH,
+			// CELL_HEIGHT);
+
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void initializeBackround() {
+		try {
+
+			// Load the background image
+			// URL backgroundImageUrl = new
+			// URL("https://imagedelivery.net/9sCnq8t6WEGNay0RAQNdvQ/UUID-cl90h85qq3675379tqywsvb6z1w/public");
+			URL backgroundImageUrl = new URL(
+					"https://c4.wallpaperflare.com/wallpaper/965/883/624/manga-one-piece-wallpaper-preview.jpg");
+			Image backgroundImage = new Image(backgroundImageUrl.toString());
+
+			ImagePattern imagePattern = new ImagePattern(backgroundImage);
+
+			// Set the ImagePattern as the background for the BorderPane
+			this.setBackground(new Background(new BackgroundFill(imagePattern, null, null)));
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void initializeRocket() {
+		try {
+			// Load the rocket image from the URL
+			URL imageUrl = new URL(
+					"https://www.kindpng.com/picc/m/179-1797286_ufo-png-pixel-walking-dead-pixel-art-transparent.png");
+
+			Image rocketImage = new Image(imageUrl.toString());
+
+			// Create the rocket here
+			rocket_Image = new ImageView(rocketImage);
+			rocket_Image.relocate(rocketX, rocketY);
+
+			rocket_Image.setFitWidth(CELL_WIDTH);
+			rocket_Image.setFitHeight(CELL_HEIGHT);
+
+			opponentPane = new Pane(opponentBoardCanvas, rocket_Image);
+			setCenter(opponentPane);
+			this.setAlignment(opponentPane, Pos.CENTER);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void initializeAllPanel() {
+		this.setTop(opponentBoardCanvas);
+		this.setBottom(playerBoardCanvas);
+
+		this.setAlignment(opponentBoardCanvas, Pos.BOTTOM_CENTER);
+		this.setAlignment(playerBoardCanvas, Pos.TOP_CENTER);
+		try {
+			// Load the water image
+			URL imageUrl = new URL("https://thumbs.dreamstime.com/b/pixel-art-water-pool-background-213938739.jpg");
+
+			waterCell_Image = new Image(imageUrl.toString());
+
+			setCells(opponentBoardCanvas);
+			setCells(playerBoardCanvas);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+
+		drawB(opponentBoardCanvas);
+		drawB(playerBoardCanvas);
+	}
+
+	private void drawB(Canvas board) {
+		GraphicsContext gc = board.getGraphicsContext2D();
+
+		// Draw the grid lines.
+		gc.setStroke(Color.BLACK);
+		for (int row = 0; row <= BOARD_ROWS; row++) {
+			double y = row * CELL_HEIGHT;
+			gc.strokeLine(0, y, BOARD_WIDTH, y);
+		}
+		for (int col = 0; col <= BOARD_COLS; col++) {
+			double x = col * CELL_WIDTH;
+			gc.strokeLine(x, 0, x, BOARD_HEIGHT);
+		}
+
+	}
+
+	private void setCells(Canvas board) throws MalformedURLException {
+		GraphicsContext gc = board.getGraphicsContext2D();
+
+		for (int row = 0; row < BOARD_ROWS; row++) {
+			for (int col = 0; col < BOARD_COLS; col++) {
+				double x = col * CELL_WIDTH;
+				double y = row * CELL_HEIGHT;
+				gc.drawImage(waterCell_Image, x, y, CELL_WIDTH, CELL_HEIGHT);
+			}
+		}
+	}
+            //wont run without theObserver, and theGame class
+	/*
+	 * @Override public void update(Object theObserved) {
+	 * 
+	 * // PLAYER GRIDCELLS GridCell playerB[][] = theGame.getBattleShipBoard();
+	 * GraphicsContext gc = playerBoardCanvas.getGraphicsContext2D();
+	 * 
+	 * for (int i = 0; i < playerB.length; i++) { for (int j = 0; j <
+	 * playerB[i].length; j++) { getCellPixels(i,j);
+	 * 
+	 * switch(playerB[i][j].getState()) {
+	 * 
+	 * case EMPTY://water gc.drawImage(waterCell_Image, rowCell_coordinate,
+	 * colCell_coordinate, CELL_WIDTH, CELL_HEIGHT); break;
+	 * 
+	 * case HIT: gc.drawImage(hit_Image, rowCell_coordinate, colCell_coordinate,
+	 * CELL_WIDTH, CELL_HEIGHT); break;
+	 * 
+	 * case MISS: gc.drawImage(miss_Image, rowCell_coordinate, colCell_coordinate,
+	 * CELL_WIDTH, CELL_HEIGHT); break;
+	 * 
+	 * } } } }
+	 */
+
+	/**
+	 * Change from 0-9 to the pixels of location
+	 * 
+	 * @param row
+	 * @param col
+	 */
+	private void getCellPixels(int row, int col) {
+
+		rowCell_coordinate = col * CELL_WIDTH;
+		colCell_coordinate = row * CELL_HEIGHT;
+
+	}
+
+	private void handlers() {
+		opponentBoardCanvas.setOnMouseClicked(new MouseListener());
+	}
+
+	private class MouseListener implements EventHandler<MouseEvent> {
+
+		@Override
+		public void handle(MouseEvent me) {
+			// Get the pixel where the canvas was just clicked
+			double row = me.getY();
+			double col = me.getX();
+
+			location_x = (int) (row / CELL_HEIGHT);
+			location_y = (int) (col / CELL_WIDTH);
+
+			System.out.println("Attacked at Row: " + location_x + ", Column: " + location_y);
+
+			animateRocket(col, row);
+		}
+
+		private void animateRocket(double targetX, double targetY) {
+
+			double grid_row = opponentBoardCanvas.localToScene(targetX, targetY).getX();
+			double grid_col = opponentBoardCanvas.localToScene(targetX, targetY).getY();
+
+			// Create a Path with LineTo elements for the rocket animation
+			Path path = new Path();
+			path.getElements().add(new MoveTo(rocketX, rocketY));
+			path.getElements().add(new LineTo(grid_row, grid_col - 500));
+			path.getElements().add(new LineTo(50, 100));
+
+			// Create a PathTransition to animate the rocket
+			PathTransition pT = new PathTransition();
+			pT.setDuration(Duration.millis(4000));
+			pT.setNode(rocket_Image);
+			pT.setPath(path);
+
+			// Start the rocket animation
+			pT.play();
+		}
+
+	}
+}
