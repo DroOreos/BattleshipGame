@@ -30,9 +30,9 @@ import javafx.scene.shape.Path;
 
 //import import javafx.scene.
 
-public class BattleShipView extends BorderPane {
+public class BattleShipView extends BorderPane implments Observer {
 
-//	private theBattleShipGame theGame;
+	private theBattleShipGame theGame;
 	private Image waterCell_Image;
 	private ImageView rocket_Image;
 	private Image hit_Image;
@@ -74,8 +74,10 @@ public class BattleShipView extends BorderPane {
 //	public BattleShipView(BattleShipGame theGame) {
 //		this.theGame = theGame;	
 //	}
-	public BattleShipView() {
-
+	public BattleShipView(theBattleShipGame theGame) {
+		this.theGame = theGame;
+        theGame.addObserver(this);
+		
 		initializeBackround();
 
 		player_grid = new Array[BOARD_ROWS][BOARD_COLS];

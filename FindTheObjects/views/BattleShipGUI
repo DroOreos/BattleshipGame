@@ -28,13 +28,15 @@ public class BattleShipGUI extends Application {
 	
 	@Override
 	public void start(Stage stage) {
-		stage.setTitle("CALL OF DUTY: MODERN WAREFARE");
+		stage.setTitle("BATTLESHIP");
 		
-		window = new BorderPane();
-	
+		
+		theBattleShipGame theGame = new theBattleShipGame();
 		BattleShipView battleShipView = new BattleShipView();
-        window.setCenter(battleShipView);
-		
+		theGame.addObserver(battleShipView);
+
+       	window = new BorderPane();
+		window.setCenter(battleShipView);
 		
 
 		Scene scene = new Scene(window, width, height);

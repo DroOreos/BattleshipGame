@@ -1,0 +1,64 @@
+//Brandon Webb
+import java.util.Observable;
+import java.util.Observer;
+
+public class theBattleShipGame extends Observable {
+    private GridCell[][] battleShipBoard;
+    private AbstractPlayer player1;
+    private AbstractPlayer player2;
+    private boolean isGameOver;
+
+    public theBattleShipGame(AbstractPlayer player1, AbstractPlayer player2) {
+        this.player1 = player1;
+        this.player2 = player2;
+        player1.updateAllGameboards(new Gameboard(), new Gameboard());
+        player2.updateAllGameboards(new Gameboard(), new Gameboard());
+        battleShipBoard = new GridCell[10][10];
+        initializeBattleShipBoard();
+    }
+
+    private void initializeBattleShipBoard() {
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                battleShipBoard[i][j] = new GridCell(i, j);
+            }
+        }
+    }
+
+    public GridCell[][] getBattleShipBoard() {
+        return battleShipBoard;
+    }
+
+    public AbstractPlayer getPlayer1() {
+        return player1;
+    }
+
+    public AbstractPlayer getPlayer2() {
+        return player2;
+    }
+
+    // Implement your game logic here
+    // For example, methods for ship placement, attacks, and game state management
+
+    // Add other methods and logic as needed
+
+    // For demonstration purposes, let's add a method to simulate a random attack
+    public void simulateRandomAttack() {
+        int randomRow = (int) (Math.random() * 10);
+        int randomCol = (int) (Math.random() * 10);
+
+        GridCell cell = battleShipBoard[randomRow][randomCol];
+
+        if (cell.getState() == GridCell.CellState.SHIP) {
+            cell.setState(GridCell.CellState.HIT);
+        } else {
+            cell.setState(GridCell.CellState.MISS);
+        }
+
+        // Notify the observers (e.g., BattleShipView) that the game state has changed
+        setChanged();
+        notifyObservers();
+    }
+
+    // Implement other game logic methods, such as ship placement, player attacks, game state management, etc.
+}
