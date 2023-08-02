@@ -18,10 +18,16 @@ import javafx.scene.input.MouseEvent;
 import javafx.animation.PathTransition;
 import javafx.util.Duration;
 import model.GridCell;
+import model.Ship;
+import model.theBattleShipGame;
 
 import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.ImagePattern;
@@ -30,7 +36,7 @@ import javafx.scene.shape.Path;
 
 //import import javafx.scene.
 
-public class BattleShipView extends BorderPane {
+public class BattleShipView extends BorderPane implements Observer {
 
 //	private theBattleShipGame theGame;
 	private Image waterCell_Image;
@@ -38,6 +44,25 @@ public class BattleShipView extends BorderPane {
 	private Image hit_Image;
 	private Image miss_Image;
 
+	private ArrayList<Ship> player_ships;
+	private ArrayList<Ship> opponent_ships;
+
+	// keep track of the ship being dragged.
+	private Ship selectedShip = null;
+
+	// ALL Battleships Horizontal
+	private Image aircraft_h; // 5 spaces
+	private Image battleship_h; // 4 spaces
+	private Image cruiser_h; // 3 spaces
+	private Image submarine_h; // 3 spaces
+	private Image destroyer_h; // 2 spaces
+
+	// ALL Battleships Vertical
+	private Image aircraft_v; // 5 spaces
+	private Image battleship_v; // 4 spaces
+	private Image cruiser_v; // 3 spaces
+	private Image submarine_v; // 3 spaces
+	private Image destroyer_v; // 2 spaces
 
 	private static final int BOARD_WIDTH = 500; // 50 pixels per cell * 10 columns
 	private static final int BOARD_HEIGHT = 300; // 30 pixels per cell * 10 rows
@@ -64,17 +89,19 @@ public class BattleShipView extends BorderPane {
 
 	private Array player_grid[][];
 	private Array opponent_grid[][];
+	private theBattleShipGame theGame;
 
 	/**
 	 * Constructor
 	 * 
 	 * @param theGame - current state of the battleship game
-	 * @throws MalformedURLException
 	 */
 //	public BattleShipView(BattleShipGame theGame) {
 //		this.theGame = theGame;	
 //	}
-	public BattleShipView() {
+	public BattleShipView(theBattleShipGame theGame) {
+		this.theGame = theGame;
+		theGame.addObserver(this);
 
 		initializeBackround();
 
@@ -87,31 +114,9 @@ public class BattleShipView extends BorderPane {
 
 		initializeRocket();
 
+		setUpPlayerShips();
+
 		handlers();
-	}
-
-	private void initializeImages() {
-		try {
-
-			GraphicsContext gc = playerBoardCanvas.getGraphicsContext2D();
-			URL hit = new URL("https://image.pngaaa.com/588/355588-middle.png");
-			hit_Image = new Image(hit.toString());
-
-			// getCellPixels(0,0);
-			// gc.drawImage(hit_Image, rowCell_coordinate, colCell_coordinate, CELL_WIDTH,
-			// CELL_HEIGHT);
-
-			URL miss = new URL(
-					"https://c4.wallpaperflare.com/wallpaper/965/883/624/manga-one-piece-wallpaper-preview.jpg");
-			miss_Image = new Image(miss.toString());
-
-			// getCellPixels(9,9);
-			// gc.drawImage(miss_Image, rowCell_coordinate, colCell_coordinate, CELL_WIDTH,
-			// CELL_HEIGHT);
-
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private void initializeBackround() {
@@ -128,6 +133,89 @@ public class BattleShipView extends BorderPane {
 
 			// Set the ImagePattern as the background for the BorderPane
 			this.setBackground(new Background(new BackgroundFill(imagePattern, null, null)));
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void initializeAllPanel() {
+		this.setTop(opponentBoardCanvas);
+		this.setBottom(playerBoardCanvas);
+
+		this.setAlignment(opponentBoardCanvas, Pos.BOTTOM_CENTER);
+		this.setAlignment(playerBoardCanvas, Pos.TOP_CENTER);
+		try {
+			// Load the water image
+			URL imageUrl = new URL("https://thumbs.dreamstime.com/b/pixel-art-water-pool-background-213938739.jpg");
+
+			waterCell_Image = new Image(imageUrl.toString());
+
+			setCells(opponentBoardCanvas);
+			setCells(playerBoardCanvas);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+
+		drawB(opponentBoardCanvas);
+		drawB(playerBoardCanvas);
+	}
+
+	private void initializeImages() {
+
+		// FOR TESTING
+		// getCellPixels(0,0);
+		// gc.drawImage(hit_Image, rowCell_coordinate, colCell_coordinate, CELL_WIDTH,
+		// CELL_HEIGHT);
+
+		try {
+
+			GraphicsContext gc = playerBoardCanvas.getGraphicsContext2D();
+			URL hit = new URL("https://image.pngaaa.com/588/355588-middle.png");
+			hit_Image = new Image(hit.toString());
+
+			URL miss = new URL(
+					"https://c4.wallpaperflare.com/wallpaper/965/883/624/manga-one-piece-wallpaper-preview.jpg");
+			miss_Image = new Image(miss.toString());
+
+			// ALL SHIP Images Declared Here
+			URL ship1 = new URL(
+					"https://img.favpng.com/4/14/5/ship-aircraft-carrier-united-states-navy-clip-art-png-favpng-YJvtPmWSFN7q50g50bnHU53j2.jpg");
+			aircraft_h = new Image(ship1.toString());
+
+			URL ship2 = new URL(
+					"https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/3868258/battleship-clipart-md.png");
+			battleship_h = new Image(ship2.toString());
+
+			URL ship3 = new URL(
+					"https://static.vecteezy.com/system/resources/thumbnails/019/007/990/small/yacht-cruise-ship-png.png");
+			cruiser_h = new Image(ship3.toString());
+
+			URL ship4 = new URL(
+					"https://p.turbosquid.com/ts-thumb/iS/z7mXc9/3l/submarine_oceangate_titan/jpg/1637404259/1920x1080/turn_fit_q99/96ecaa6f68c7e9fb1881b7c070c3134479f33dad/submarine_oceangate_titan-1.jpg");
+			submarine_h = new Image(ship4.toString());
+
+			URL ship5 = new URL("https://cdn.pixabay.com/photo/2020/08/28/01/58/raft-5523297_1280.png");
+			destroyer_h = new Image(ship5.toString());
+
+			ship1 = new URL(
+					"https://img.favpng.com/4/14/5/ship-aircraft-carrier-united-states-navy-clip-art-png-favpng-YJvtPmWSFN7q50g50bnHU53j2.jpg");
+			aircraft_v = new Image(ship1.toString());
+
+			ship2 = new URL(
+					"https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/3868258/battleship-clipart-md.png");
+			battleship_v = new Image(ship2.toString());
+
+			ship3 = new URL(
+					"https://static.vecteezy.com/system/resources/thumbnails/019/007/990/small/yacht-cruise-ship-png.png");
+			cruiser_v = new Image(ship3.toString());
+
+			ship4 = new URL(
+					"https://p.turbosquid.com/ts-thumb/iS/z7mXc9/3l/submarine_oceangate_titan/jpg/1637404259/1920x1080/turn_fit_q99/96ecaa6f68c7e9fb1881b7c070c3134479f33dad/submarine_oceangate_titan-1.jpg");
+			submarine_v = new Image(ship4.toString());
+
+			ship5 = new URL("https://cdn.pixabay.com/photo/2020/08/28/01/58/raft-5523297_1280.png");
+			destroyer_v = new Image(ship5.toString());
+
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -156,28 +244,11 @@ public class BattleShipView extends BorderPane {
 		}
 	}
 
-	private void initializeAllPanel() {
-		this.setTop(opponentBoardCanvas);
-		this.setBottom(playerBoardCanvas);
+	private void setUpPlayerShips() {
 
-		this.setAlignment(opponentBoardCanvas, Pos.BOTTOM_CENTER);
-		this.setAlignment(playerBoardCanvas, Pos.TOP_CENTER);
-		try {
-			// Load the water image
-			URL imageUrl = new URL("https://thumbs.dreamstime.com/b/pixel-art-water-pool-background-213938739.jpg");
-
-			waterCell_Image = new Image(imageUrl.toString());
-
-			setCells(opponentBoardCanvas);
-			setCells(playerBoardCanvas);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
-
-		drawB(opponentBoardCanvas);
-		drawB(playerBoardCanvas);
 	}
 
+//-----------------------------HELPER FUNCTIONS--------------------
 	private void drawB(Canvas board) {
 		GraphicsContext gc = board.getGraphicsContext2D();
 
@@ -205,30 +276,6 @@ public class BattleShipView extends BorderPane {
 			}
 		}
 	}
-            //wont run without theObserver, and theGame class
-	/*
-	 * @Override public void update(Object theObserved) {
-	 * 
-	 * // PLAYER GRIDCELLS GridCell playerB[][] = theGame.getBattleShipBoard();
-	 * GraphicsContext gc = playerBoardCanvas.getGraphicsContext2D();
-	 * 
-	 * for (int i = 0; i < playerB.length; i++) { for (int j = 0; j <
-	 * playerB[i].length; j++) { getCellPixels(i,j);
-	 * 
-	 * switch(playerB[i][j].getState()) {
-	 * 
-	 * case EMPTY://water gc.drawImage(waterCell_Image, rowCell_coordinate,
-	 * colCell_coordinate, CELL_WIDTH, CELL_HEIGHT); break;
-	 * 
-	 * case HIT: gc.drawImage(hit_Image, rowCell_coordinate, colCell_coordinate,
-	 * CELL_WIDTH, CELL_HEIGHT); break;
-	 * 
-	 * case MISS: gc.drawImage(miss_Image, rowCell_coordinate, colCell_coordinate,
-	 * CELL_WIDTH, CELL_HEIGHT); break;
-	 * 
-	 * } } } }
-	 */
-
 	/**
 	 * Change from 0-9 to the pixels of location
 	 * 
@@ -241,12 +288,49 @@ public class BattleShipView extends BorderPane {
 		colCell_coordinate = row * CELL_HEIGHT;
 
 	}
+//-----------------------------------------------------------------
+//--------------------------OBSERVRER( update game)-----------------
+	
 
-	private void handlers() {
-		opponentBoardCanvas.setOnMouseClicked(new MouseListener());
+	@Override
+	public void update(Observable o, Object arg) {
+
+		// PLAYER GRIDCELLS
+		GridCell playerB[][] = theGame.getBattleShipBoard();
+		GraphicsContext gc = playerBoardCanvas.getGraphicsContext2D();
+
+		for (int i = 0; i < playerB.length; i++) {
+
+			for (int j = 0; j < playerB[i].length; j++) {
+				getCellPixels(i, j);
+
+				switch (playerB[i][j].getState()) {
+
+				case HIT:
+					gc.drawImage(hit_Image, rowCell_coordinate, colCell_coordinate, CELL_WIDTH, CELL_HEIGHT);
+					break;
+
+				case MISS:
+					gc.drawImage(miss_Image, rowCell_coordinate, colCell_coordinate, CELL_WIDTH, CELL_HEIGHT);
+					break;
+				}
+			}
+		}
 	}
 
-	private class MouseListener implements EventHandler<MouseEvent> {
+	
+//------------------------------------------------------------------
+	
+	
+	
+	private void handlers() {
+		opponentBoardCanvas.setOnMouseClicked(new MouseListener_attacking());
+
+		// opponentBoardCanvas.setOnMouseClicked(new MouseListener());
+		playerBoardCanvas.setOnMouseClicked(new MouseListner_placeShips());
+	}
+
+	private class MouseListener_attacking implements EventHandler<MouseEvent> {
 
 		@Override
 		public void handle(MouseEvent me) {
@@ -284,4 +368,13 @@ public class BattleShipView extends BorderPane {
 		}
 
 	}
+
+	private class MouseListner_placeShips implements EventHandler<MouseEvent> {
+
+		@Override
+		public void handle(MouseEvent me) {
+
+		}
+	}
+
 }
