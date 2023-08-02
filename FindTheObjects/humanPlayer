@@ -20,6 +20,59 @@ public class HumanPlayer extends AbstractPlayer {
 
 	}
 
+	public void addShip(int x, int y, boolean orientation,int length) {
+		if(isValid(x,y,length,orientation)) {
+			GridCell[] arrForShip = new GridCell[length];
+			if(orientation) {
+				for(int i =0; i<length;i++) {
+					GridCell cell =	board.getGridCell(x+i,y);
+					if(cell.getState()==GridCell.CellState.SHIP) 
+						break;
+	
+					cell.setState(GridCell.CellState.SHIP);
+					cell = arrForShip[x+i];
+					
+				}
+				ship newShip = new ship(arrForShip);
+				shipArr[num_shipsAlive]=newShip;
+				num_shipsAlive++;
+			}
+			else {
+				for(int i =0; i<length;i++) {
+					GridCell cell =	board.getGridCell(x,y+i);
+					if(cell.getState()==GridCell.CellState.SHIP) 
+						break;
+					
+					cell.setState(GridCell.CellState.SHIP);
+					cell = arrForShip[x+i];
+					
+				}
+				ship newShip = new ship(arrForShip);
+				shipArr[num_shipsAlive]=newShip;
+				num_shipsAlive++;
+				
+			}
+		}	
+	}
+	private boolean isValid(int x, int y,int length,boolean orientation) {
+		// TODO Auto-generated method stub
+		if(orientation) {
+			if(x+length>=10)
+				return false;
+							
+		}
+					
+		else {
+			if (y+length>=10)
+				return false;
+		}
+		
+		return true;
+	}
+
+
+
+
 	/**
 	 * Place the ships for the GUI version.
 	 */
