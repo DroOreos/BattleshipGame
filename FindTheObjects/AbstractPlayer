@@ -86,5 +86,9 @@ public abstract class AbstractPlayer {
     public String getName() {
     	return this.name;
     }
+    public Ship[] getShipArr(){
+        return this.ships;
+    }
+
     
 }
