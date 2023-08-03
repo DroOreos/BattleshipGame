@@ -1,0 +1,70 @@
+
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.NodeOrientation;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+
+import model.theBattleShipGame;
+//import 
+
+public class BattleShipGUI extends Application {
+
+	private MenuBar menuBar;
+	private Menu optionsMenu;
+	
+	public static void main(String[] args) { launch(args); }
+	
+	//private BattleShipGame theGame;
+	private BorderPane window;
+	public static final int width = 700;
+	public static final int height = 700;
+
+	@Override
+	public void start(Stage stage) {
+		stage.setTitle("BATTLESHIP");
+		menuBar = new MenuBar();
+		optionsMenu = new Menu("Options");
+		
+		theBattleShipGame theGame = new theBattleShipGame();
+		BattleShipView battleShipView = new BattleShipView();
+		theGame.addObserver(battleShipView);
+
+       	window = new BorderPane();
+		window.setCenter(battleShipView);
+		
+
+		Scene scene = new Scene(window, width, height);
+		stage.setScene(scene);
+		stage.show();
+		
+	}
+
+	private class NewGameHandler implements EventHandler<ActionEvent>{
+		public void handle(ActionEvent event){
+			theGame.initializeBattleShipBoard();
+
+		}
+	} 
+
+	private class RandomAIHandler implements EventHandler<ActionEvent>{
+		public void handle(ActionEvent event){
+			//add this later 
+		}
+	}
+
+	private class HardAIHandler implements EventHandler<ActionEvent>{
+		public void handle(ActionEvent event){
+			//add this later 
+		}
+	}
+}
