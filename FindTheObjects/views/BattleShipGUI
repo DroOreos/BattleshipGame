@@ -1,4 +1,3 @@
-
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,6 +17,12 @@ import model.theBattleShipGame;
 //import 
 
 public class BattleShipGUI extends Application {
+	private MenuBar menuBar;
+	private Menu optionsMenu;
+	private Menu strategiesMenu;
+	private MenuItem newGame;
+	private MenuItem randomAI;
+	private MenuItem hardAI;
 	
 	public static void main(String[] args) { launch(args); }
 	
@@ -29,7 +34,12 @@ public class BattleShipGUI extends Application {
 	@Override
 	public void start(Stage stage) {
 		stage.setTitle("BATTLESHIP");
-		
+		menuBar = new MenuBar();
+		optionsMenu = new Menu("Options");
+		strategiesMenu = new Menu("Strategies");
+		newGame = new MenuItem("New Game");
+		randomAI = new MenuItem("Random AI");
+		hardAI = new MenuItem("Hard AI");
 		
 		theBattleShipGame theGame = new theBattleShipGame();
 		BattleShipView battleShipView = new BattleShipView();
@@ -38,10 +48,36 @@ public class BattleShipGUI extends Application {
        	window = new BorderPane();
 		window.setCenter(battleShipView);
 		
+		strategiesMenu.getItems().addAll(randomAI, hardAI);
+		optionsMenu.getItems.addAll(newGame, strategiesMenu);
+		menuBar.getMenus().addAll(optionsMenu);
+		window.setTop(menuBar);
 
 		Scene scene = new Scene(window, width, height);
 		stage.setScene(scene);
 		stage.show();
 		
 	}
+
+	private class NewGameHandler implements EventHandler<ActionEvent>{
+		@Override
+		public void handle(ActionEvent event){
+			theGame.initializeBattleShipBoard();
+		}
+	}
+
+	private class RandomAIHandler implements EventHandler<ActionEvent>{
+		@Override
+		public void handle(ActionEvent event){
+			//TODO: implement AI (Chris)
+		}
+	}
+
+	private class HardAIHandler implements EventHandler<ActionEvent>{
+		@Override
+		public void handle(ActionEvent event){
+			//TODO: implement AI (Chris)
+		}
+	}
+
 }
