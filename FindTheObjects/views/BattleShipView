@@ -510,12 +510,6 @@ public class BattleShipView extends BorderPane implements Observer {
 
 	}
 
-	private class MouseListner_placeShips implements EventHandler<MouseEvent> {
-
-		@Override
-		public void handle(MouseEvent me) {
-
-		}
-	}
+	
 
 }
