@@ -259,5 +259,12 @@ public class HumanPlayer extends AbstractPlayer {
 
 		return placement.toUpperCase().equals("H");
 	}
+
+	@Override
+	public void updateAllGameboards(Gameboard a, Gameboard b) {
+		this.player_board = a;
+		this.opponent_board = b;
+	}
+
 	
 }

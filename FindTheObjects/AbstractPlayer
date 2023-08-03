@@ -22,10 +22,7 @@ public abstract class AbstractPlayer {
         initializeShips();
     }
     
-    public void updateAllGameboards(Gameboard a, Gameboard b) {
-    	this.game = a;
-    	this.opponent_game = b;
-    }
+    public abstract void updateAllGameboards(Gameboard p, Gameboard o);
 
     /**
      * initialize one of each ship

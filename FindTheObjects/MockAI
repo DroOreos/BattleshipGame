@@ -1,4 +1,5 @@
 
+
 import java.util.Random;
 
 /**
@@ -29,15 +30,13 @@ public class MockAI extends AbstractPlayer {
                 int col = rand.nextInt(cols);
                 boolean horizontal = rand.nextBoolean();
 
-                // If successfully placed ships, exit the while loop
-                validLocation = opponent_game.placeShip(col, row, ship.length, horizontal);
+                validLocation = opponent_board.placeShip(col, row, ship.length, horizontal);
             }
         }
     }
 
     @Override
     public void makeMoveGUI() {
-        // Implement GUI version of making a move for the mock AI (e.g., random move)
         int row = rand.nextInt(rows);
         int col = rand.nextInt(cols);
         makeMoveConsole(row, col);
@@ -45,8 +44,7 @@ public class MockAI extends AbstractPlayer {
 
     @Override
     public void makeMoveConsole(int r, int c) {
-        // Implement console version of making a move for the mock AI (e.g., random move)
-        game.shoot(r, c);
+        player_board.shoot(r, c);
     }
 
     @Override
@@ -58,5 +56,11 @@ public class MockAI extends AbstractPlayer {
     public boolean hasWon() {
         return num_shipsSunk == ships.length;
     }
+
+	@Override
+	public void updateAllGameboards(Gameboard o, Gameboard p) {
+		this.opponent_board = o;
+		this.player_board  = p;
+	}
 
 }

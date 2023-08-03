@@ -1,4 +1,15 @@
 
+import model.AbstractPlayer;
+import model.AIPlayerRandom;
+import model.Gameboard;
+import model.GridCell;
+import model.HumanPlayer;
+import model.MockAI;
+import model.MockSub;
+import model.Ship;
+
+import java.util.Scanner;
+
 import java.util.Scanner;
 import java.util.Random;
 
@@ -21,14 +32,14 @@ public class BattleshipConsolGame {
 		((HumanPlayer) humanPlayer).placeShipsConsole(playerBoard); // cast down
 
 		// Step 3: Place ships for the AI player (random placement)
+		
 		// AbstractPlayer aiPlayer = new AIPlayerRandom("AI Player");
 		// aiPlayer.updateAllGameboards(playerBoard, opponentBoard);
-
 		// ((AIPlayerRandom) aiPlayer).placeShips(opponentBoard);
 
 		//Using the mock AI Player
 		AbstractPlayer aiPlayer = new MockAI("AI Player", rows, cols);			
-		aiPlayer.updateAllGameboards(playerBoard,opponentBoard);
+		aiPlayer.updateAllGameboards(opponentBoard,playerBoard);
 		((MockAI) aiPlayer).placeShips(opponentBoard);
 
 		
@@ -63,7 +74,7 @@ public class BattleshipConsolGame {
 
 			// AI's turn
 			aiPlayer.makeMoveConsole(random.nextInt(rows), random.nextInt(cols));
-			aiPlayer.updateAllGameboards(playerBoard,opponentBoard);
+			aiPlayer.updateAllGameboards(opponentBoard,playerBoard);
 
 			// PRINT THE BOARD HERE:
 			printAIBoard(opponentBoard);
