@@ -9,19 +9,20 @@ public abstract class AbstractPlayer {
     protected int misses;
     
     protected int num_shipsAlive;
-    protected Ship[] ships = new Ship[5];
+    protected Ship[] ships = new Ship[1];
     
     protected Gameboard game; //place our ships here 
     protected Gameboard opponent_game; // send out attacks here
 
     public AbstractPlayer(String name) {
-    	this.game = game;
         this.name = name;
         
         this.hits = 0;
         this.misses = 0;
         initializeShips();
     }
+    
+    public abstract void updateAllGameboards(Gameboard p, Gameboard o);
 
     /**
      * initialize one of each ship
@@ -32,38 +33,30 @@ public abstract class AbstractPlayer {
        // ships[2] = new Cruiser();
        // ships[3] = new Destroyer();
        // ships[4] = new Battleship();
+    	
+    	for(int i = 0; i < 1; i++) {
+    		ships[i] = new mockSub(3);
+    	}
         num_shipsAlive = 5;
     }
 
     /**
      * Place ships randomly once you create an AI_player object. or humanPlayer manually places ships 
      */
-    public abstract void placeShips();
+    public abstract void placeShips(Gameboard g);
 
     /**
      * Makes a move on the game board in the GUI version of the game.
      *
      * @param game The current game board status.
      */
-    public abstract void makeMoveGUI(Gameboard game);
+    public abstract void makeMoveGUI();
 
     /**
      * player move on console
      */
-    public abstract void makeMoveConsole(int r, int c,Gameboard game);
+    public abstract void makeMoveConsole(int r, int c);
 
-
-    /**
-     * Checks if a ship placement is valid.
-     * This method should be implemented by the subclasses to validate ship placement rules.
-     *
-     * @param ship        The ship to be placed.
-     * @param row         The row number of the starting location.
-     * @param col         The column number of the starting location.
-     * @param isHorizontal True if the ship should be placed horizontally, false if vertically.
-     * @return True if the placement is valid, false otherwise.
-     */
-    protected abstract boolean isValidShipPlacement(Ship ship, int row, int col, boolean isHorizontal);
 
     /**
      * Gets the number of ships owned by the player.
@@ -80,6 +73,7 @@ public abstract class AbstractPlayer {
     protected void updateStatusOfBoard(Gameboard game) {
     	this.game = game;
     }
+    public abstract boolean hasWon(); 
     
     /**
      * Updates the game board status for the opponent of the player. (mainly for attacks)

@@ -1,0 +1,66 @@
+
+
+import java.util.Random;
+
+/**
+ * Needed to run the console game.
+ */
+public class MockAI extends AbstractPlayer {
+
+    private Random rand = new Random();
+    private int num_shipsSunk;
+    private int rows;
+    private int cols;
+
+    public MockAI(String name, int rows, int cols) {
+        super(name);
+        num_shipsSunk = 0;
+        this.rows = rows;
+        this.cols = cols;
+    }
+
+    @Override
+    public void placeShips(Gameboard opponentBoard) {
+    	this.updateOpponentBoard(opponentBoard);
+    	
+        for (Ship ship : ships) {
+            boolean validLocation = false;
+            while (!validLocation) {
+                int row = rand.nextInt(rows);
+                int col = rand.nextInt(cols);
+                boolean horizontal = rand.nextBoolean();
+
+                validLocation = opponent_board.placeShip(col, row, ship.length, horizontal);
+            }
+        }
+    }
+
+    @Override
+    public void makeMoveGUI() {
+        int row = rand.nextInt(rows);
+        int col = rand.nextInt(cols);
+        makeMoveConsole(row, col);
+    }
+
+    @Override
+    public void makeMoveConsole(int r, int c) {
+        player_board.shoot(r, c);
+    }
+
+    @Override
+    public int getNumShips() {
+        return super.num_shipsAlive;
+    }
+
+    @Override
+    public boolean hasWon() {
+        return num_shipsSunk == ships.length;
+    }
+
+	@Override
+	public void updateAllGameboards(Gameboard o, Gameboard p) {
+		this.opponent_board = o;
+		this.player_board  = p;
+	}
+
+}

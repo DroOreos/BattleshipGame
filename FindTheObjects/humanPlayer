@@ -1,3 +1,5 @@
+
+
 import java.util.Scanner;
 
 /**
@@ -7,6 +9,7 @@ public class HumanPlayer extends AbstractPlayer {
 
 	private Scanner input = new Scanner(System.in);
 	private int num_shipsSunk;
+	public int[] lengthOfShip = {5,4,3,3,2};
 
 	/**
 	 * Constructor
@@ -17,31 +20,95 @@ public class HumanPlayer extends AbstractPlayer {
 
 	}
 
+	public void addShip(int x, int y, boolean orientation,int length) {
+		if(isValid(x,y,length,orientation)) {
+			GridCell[] arrForShip = new GridCell[length];
+			if(orientation) {
+				for(int i =0; i<length;i++) {
+					GridCell cell =	game.getGridCell(x+i,y);
+					if(cell.getState()==GridCell.CellState.SHIP) 
+						break;
+	
+					cell.setState(GridCell.CellState.SHIP);
+					cell = arrForShip[x+i];
+					
+				}
+				ship newShip = new ship(arrForShip);
+				shipArr[num_shipsAlive]=newShip;
+				num_shipsAlive++;
+			}
+			else {
+				for(int i =0; i<length;i++) {
+					GridCell cell =	game.getGridCell(x,y+i);
+					if(cell.getState()==GridCell.CellState.SHIP) 
+						break;
+					
+					cell.setState(GridCell.CellState.SHIP);
+					cell = arrForShip[x+i];
+					
+				}
+				ship newShip = new ship(arrForShip);
+				shipArr[num_shipsAlive]=newShip;
+				num_shipsAlive++;
+				
+			}
+		}	
+	}
+	private boolean isValid(int x, int y,int length,boolean orientation) {
+		// TODO Auto-generated method stub
+		if(orientation) {
+			if(x+length>=10)
+				return false;
+							
+		}
+					
+		else {
+			if (y+length>=10)
+				return false;
+		}
+		
+		return true;
+	}
+
+
+
+
 	/**
-	 * Places the ships on the game board by getting valid locations from the user.
+	 * Place the ships for the GUI version.
 	 */
 	@Override
-	public void placeShips() {
-		boolean validLocation;
-
+	public void placeShips(Gameboard game) {
+		this.updateStatusOfBoard(game);
+		
+		
+	}
+	
+	/**
+	 * Places the ships on the game board by getting valid locations from the user.
+	 * @param playerBoard 
+	 */
+	public void placeShipsConsole(Gameboard playerBoard) {
+		this.updateStatusOfBoard(playerBoard);
+		int i = 1;
 		for (Ship ship : ships) {
-			validLocation = false;
-			while (!validLocation) {
+            boolean validLocation = false;
+            while (!validLocation) {
+            		
+            	System.out.println("Place Ship# " + i);
 
-				int row = getValidRowInput();
-				int col = getValidColumnInput();
-				boolean horizontal = getHorizontalInput();
+                int row = getValidRowInput();
+                int col = getValidColumnInput();
+                boolean horizontal = getHorizontalInput();
+                
+                //if successfully placed ships, exit the while loop
+                validLocation = game.placeShip(row, col, ship.length, horizontal);
+                
+                if( !validLocation ) {
+                	System.out.println("Invalid Input.");
+                }
 
-				// Check if the placement on the board is valid Downwards or rightwards.
-				if (isValidShipPlacement(ship, row, col, horizontal)) {
-					game.placeShip(col, row, ship.length, horizontal);
-					validLocation = true;
-				} else {
-					System.out.println("ERROR try another location;");
-
-				}
-			}
-		}
+            } i++;
+        }
 	}
 
 	/**
@@ -50,8 +117,8 @@ public class HumanPlayer extends AbstractPlayer {
 	 * @param game_status The current game board status.
 	 */
 	@Override
-	public void makeMoveGUI(Gameboard game_status) {
-		super.updateOpponentBoard(game_status);
+	public void makeMoveGUI() {
+		//super.updateOpponentBoard(game_status);
 
 	}
 
@@ -64,10 +131,10 @@ public class HumanPlayer extends AbstractPlayer {
 	 * @param game_status The current game board status.
 	 */
 	@Override
-	public void makeMoveConsole(int r, int c, Gameboard game_status) {
-		super.updateOpponentBoard(game_status);
+	public void makeMoveConsole(int r, int c) {
+		//super.updateOpponentBoard(game_status);
 
-		game_status.shoot(r,c);
+		opponent_game.shoot(r,c);
 
 	}
 	
@@ -86,6 +153,7 @@ public class HumanPlayer extends AbstractPlayer {
 	 *
 	 * @return True if all of the human player's ships are sunk, false otherwise.
 	 */
+	@Override
 	public boolean hasWon() {
 		return num_shipsSunk == ships.length;
 	}
@@ -104,34 +172,9 @@ public class HumanPlayer extends AbstractPlayer {
 		this.num_shipsSunk = s;
 	}
 
-	/**
-	 * Once entered (x,y) coordinates we check if rest of the ship should be able to
-	 * fit downwards or rightWards.
-	 */
-	@Override
-	protected boolean isValidShipPlacement(Ship ship, int row, int col, boolean isHorizontal) {
-		int size = ship.length;
 
-		// Check if the placement will be inbound
-		if (row < 0 || col < 0 || row >= game.getRow() || col >= game.getCol()) {
-			return false;
-		}
 
-		// Check if anyOverlapping occurs
-		for (int i = 0; i < size; i++) {
-			if (isHorizontal) {
-				if (col + i >= game.getCol() || game.containsShip(row, col + i)) {
-					return false;
-				}
-			} else {// vertical
-				if (row + i >= game.getRow() || game.containsShip(row, col + i)) {
-					return false;
-				}
-			}
-		}
-
-		return true;
-	}
+	
 
 	/**
 	 * Helper function for Place_ships(): get a valid row (A-J)
@@ -149,7 +192,7 @@ public class HumanPlayer extends AbstractPlayer {
 				String r_str = input.next();
 				char rowChar = r_str.toUpperCase().charAt(0);
 
-				row = rowChar - 'A' + 1;
+				row = rowChar - 'A';
 				if (row >= 0 && row <= 9) {
 					valid = true;
 				} else
@@ -214,7 +257,14 @@ public class HumanPlayer extends AbstractPlayer {
 			}
 		}
 
-		return placement.equals("H");
+		return placement.toUpperCase().equals("H");
 	}
 
+	@Override
+	public void updateAllGameboards(Gameboard a, Gameboard b) {
+		this.player_board = a;
+		this.opponent_board = b;
+	}
+
+	
 }

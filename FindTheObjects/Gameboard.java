@@ -106,4 +106,8 @@ public class Gameboard {
     public int getCols(){
         return this.cols;
     }
+
+     public GridCell getGridCell(int x, int y) {
+    	return grid[x][y];
+    }
 }

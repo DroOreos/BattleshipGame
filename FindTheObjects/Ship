@@ -1,3 +1,4 @@
+
 /*
  * Lex Castaneda
  * 
@@ -6,15 +7,23 @@
  * a getter for the coordinates in GridCell 
  * 
  */
-public class ship {
+public class Ship {
 
 	private GridCell[] gridCellArr;
 	private boolean state; //true ==alive , false== sunk
 	public boolean orenation; //true == upright , false == facing west
 	public int length; 
 	
+	public Ship(int size) {
+        this.gridCellArr = null;
+        this.state = false; // Default state is false (sunk) for ships created with no initial coordinates
+        this.orenation = true;
+        this.length = size;
+    }
 	
-	ship(GridCell[] arr){
+	
+	
+	Ship(GridCell[] arr){
 		this.gridCellArr = arr;
 		this.state = true;
 		this.orenation = true;

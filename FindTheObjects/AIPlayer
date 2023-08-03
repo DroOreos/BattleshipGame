@@ -1,3 +1,4 @@
+
 import java.util.Random;
 
 public class AIPlayerRandom extends AbstractPlayer implements AIStrategy{
@@ -6,8 +7,8 @@ public class AIPlayerRandom extends AbstractPlayer implements AIStrategy{
     private int colMove;
     private int rowMove;
 
-    public AIPlayerRandom(){
-        super("AI Player");
+    public AIPlayerRandom(String name){
+        super(name);
         
     }
 
@@ -15,7 +16,8 @@ public class AIPlayerRandom extends AbstractPlayer implements AIStrategy{
     /**
      * places ships randomly on the board 
      */
-    public void placeShips(){
+    public void placeShips(Gameboard game){
+    	super.updateOpponentBoard(game);
         boolean validPlacement;
 
         for(Ship ship : ships){
@@ -33,12 +35,9 @@ public class AIPlayerRandom extends AbstractPlayer implements AIStrategy{
 
     @Override
     public abstract void makeMoveGUI(Gameboard game){
-        updateOpponentBoard(game)
+        updateOpponentBoard(game);
     }
 
-    public void makeMoveConsole(int r, int c,Gameboard game){
-        
-    }
 
     @Override
 	public boolean isValidShipPlacement(Ship ship, int row, int col, boolean isHorizontal) {
