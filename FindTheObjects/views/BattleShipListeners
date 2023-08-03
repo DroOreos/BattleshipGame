@@ -1,0 +1,239 @@
+import javafx.animation.PathTransition;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.util.Duration;
+import model.AbstractPlayer;
+import model.Gameboard;
+import model.GridCell;
+import model.GridCell.CellState;
+import model.Ship;
+import model.humanPlayer;
+import model.theBattleShipGame;
+
+
+public class BattleShipListeners {
+	private Scene scene;
+	private Canvas playerC;
+	private Canvas oppC;
+	private theBattleShipGame game;
+	private humanPlayer human;
+	private AbstractPlayer AiPlayer;
+	private GridCell[][] player_grid;
+	private GridCell[][] opp_grid;
+	
+	
+	private static final int BOARD_WIDTH = 500; // 50 pixels per cell * 10 columns
+	private static final int BOARD_HEIGHT = 300; // 30 pixels per cell * 10 rows
+	private static final int BOARD_ROWS = 10;
+	private static final int BOARD_COLS = 10;
+	private static final int CELL_WIDTH = BOARD_WIDTH / BOARD_COLS;
+	private static final int CELL_HEIGHT = BOARD_HEIGHT / BOARD_ROWS;
+	
+	public static final int canvasTOP = 0;
+	public static final int canvasBOTTOM = 0;
+	
+	public static final int canvas2TOP = 0;
+	public static final int canvas2BOTTOM = 0;
+
+	public BattleShipListeners(Scene s, Canvas playerC, Canvas opponentC,theBattleShipGame game) {
+		this.scene = s;
+		this.playerC = playerC;
+		this.oppC = opponentC;
+		this.game = game;
+		this.human = (humanPlayer) game.getPlayer1();
+		this.AiPlayer = game.getPlayer2();
+		this.player_grid = this.game.getHumanGrid();
+		this.opp_grid = this.game.getAiGrid();
+		
+	}
+	public void handlers() {
+		oppC.setOnMouseClicked(new MouseListener_attacking());
+		initalizeKeyListener();
+		playerC.setOnMouseClicked(new MouseListner_placeShips());
+	}
+	private void initalizeKeyListener() {
+		scene.setOnKeyPressed(new KeyListener());
+	}
+	private class KeyListener implements EventHandler<KeyEvent>{
+
+		@Override
+		public void handle(KeyEvent event) {
+			// TODO Auto-generated method stub
+			if (event.getCode() == KeyCode.DELETE) {
+				human.delete(game.getHumanGameBoard());
+				//signals to GUI to Delete
+			}
+			
+		} 
+		
+	}
+	private class MouseListner_placeShips implements EventHandler<MouseEvent>{
+
+		@Override
+		public void handle(MouseEvent me) {
+			// TODO Auto-generated method stub
+			double row = me.getY();
+			double col =me.getX();
+			System.out.println("("+row+", "+col + ") ");
+				
+				
+			int moveRow = -1;
+			int moveCol = -1;
+						
+
+			//determine selected ROW and COL for 
+
+			//determine selected ROW
+			if(row>=0 && row<=CELL_HEIGHT) 
+				moveRow = 0;
+			if(row>=CELL_HEIGHT && row<=(CELL_HEIGHT*2)) 
+				moveRow = 1;
+			if(row>=(CELL_HEIGHT*2) && row<=(CELL_HEIGHT*3)) 
+				moveRow = 2;
+			if(row>=(CELL_HEIGHT*3) && row<=(CELL_HEIGHT*4)) 
+				moveRow = 3;
+			if(row>=(CELL_HEIGHT*4) && row<=(CELL_HEIGHT*5)) 
+				moveRow = 4;
+			if(row>=(CELL_HEIGHT*5) && row<=(CELL_HEIGHT*6)) 
+				moveRow = 5;
+			if(row>=(CELL_HEIGHT*6) && row<=(CELL_HEIGHT*7)) 
+				moveRow = 6;
+			if(row>=(CELL_HEIGHT*7) && row<=(CELL_HEIGHT*8)) 
+				moveRow = 7;
+			if(row>=(CELL_HEIGHT*8) && row<=(CELL_HEIGHT*9)) 
+				moveRow = 8;
+			if(row>=(CELL_HEIGHT*9) && row<=(CELL_HEIGHT*10)) 
+				moveRow = 9;
+			
+			//determine selected COL
+			if(col>=canvasBOTTOM && col<CELL_WIDTH) 
+				moveCol = 0;
+			if(col>=CELL_WIDTH && col<=(CELL_WIDTH*2)) 
+				moveCol = 1;
+			if(col>=(CELL_WIDTH*2) && col<=(CELL_WIDTH*3)) 
+				moveCol = 2;
+			if(col>=(CELL_WIDTH*3) && col<=(CELL_WIDTH*4)) 
+				moveCol = 3;
+			if(col>=(CELL_WIDTH*4) && col<=(CELL_WIDTH*5)) 
+				moveCol = 4;
+			if(col>=(CELL_WIDTH*5) && col<=(CELL_WIDTH*6)) 
+				moveCol = 5;
+			if(col>=(CELL_WIDTH*6) && col<=(CELL_WIDTH*7)) 
+				moveCol = 6;
+			if(col>=(CELL_WIDTH*7) && col<=(CELL_WIDTH*8)) 
+				moveCol = 7;
+			if(col>=(CELL_WIDTH*8) && col<=(CELL_WIDTH*9)) 
+				moveCol = 8;
+			if(col>=(CELL_WIDTH*9) && col<=(CELL_WIDTH*10)) 
+				moveCol = 9;
+			
+			
+			//facing west
+			if(me.getButton().equals(MouseButton.SECONDARY)){
+				human.addShip(moveRow,moveCol,false,human.lengthOfShip[human.getNumShips()]);
+
+	        }
+			//facing upright
+			else {
+				human.addShip(moveRow,moveCol,true,human.lengthOfShip[human.getNumShips()]);
+			}
+				
+		}	
+		 
+		
+	}
+
+
+	private class MouseListener_attacking implements EventHandler<MouseEvent> {
+
+		@Override
+		public void handle(MouseEvent me) {
+			// Get the pixel where the canvas was just clicked
+			// TODO Auto-generated method stub
+			double row = me.getY();
+			double col =me.getX();
+			System.out.println("("+row+", "+col + ") ");
+			
+			
+			int moveRow = -1;
+			int moveCol = -1;
+
+			
+			//determine selected ROW and COL for 
+
+			if(row>=0 && row<=CELL_HEIGHT) 
+				moveRow = 0;
+			if(row>=CELL_HEIGHT && row<=(CELL_HEIGHT*2)) 
+				moveRow = 1;
+			if(row>=(CELL_HEIGHT*2) && row<=(CELL_HEIGHT*3)) 
+				moveRow = 2;
+			if(row>=(CELL_HEIGHT*3) && row<=(CELL_HEIGHT*4)) 
+				moveRow = 3;
+			if(row>=(CELL_HEIGHT*4) && row<=(CELL_HEIGHT*5)) 
+				moveRow = 4;
+			if(row>=(CELL_HEIGHT*5) && row<=(CELL_HEIGHT*6)) 
+				moveRow = 5;
+			if(row>=(CELL_HEIGHT*6) && row<=(CELL_HEIGHT*7)) 
+				moveRow = 6;
+			if(row>=(CELL_HEIGHT*7) && row<=(CELL_HEIGHT*8)) 
+				moveRow = 7;
+			if(row>=(CELL_HEIGHT*8) && row<=(CELL_HEIGHT*9)) 
+				moveRow = 8;
+			if(row>=(CELL_HEIGHT*9) && row<=(CELL_HEIGHT*10)) 
+				moveRow = 9;
+			
+			//determine selected COL
+			if(col>=0 && col<CELL_WIDTH) 
+				moveCol = 0;
+			if(col>=CELL_WIDTH && col<=(CELL_WIDTH*2)) 
+				moveCol = 1;
+			if(col>=(CELL_WIDTH*2) && col<=(CELL_WIDTH*3)) 
+				moveCol = 2;
+			if(col>=(CELL_WIDTH*3) && col<=(CELL_WIDTH*4)) 
+				moveCol = 3;
+			if(col>=(CELL_WIDTH*4) && col<=(CELL_WIDTH*5)) 
+				moveCol = 4;
+			if(col>=(CELL_WIDTH*5) && col<=(CELL_WIDTH*6)) 
+				moveCol = 5;
+			if(col>=(CELL_WIDTH*6) && col<=(CELL_WIDTH*7)) 
+				moveCol = 6;
+			if(col>=(CELL_WIDTH*7) && col<=(CELL_WIDTH*8)) 
+				moveCol = 7;
+			if(col>=(CELL_WIDTH*8) && col<=(CELL_WIDTH*9)) 
+				moveCol = 8;
+			if(col>=(CELL_WIDTH*9) && col<=(CELL_WIDTH*10)) 
+				moveCol = 9;
+		
+			
+			//Getting the cell
+			GridCell selectedCell= player_grid[moveRow][moveCol];
+			if(selectedCell.getState()==GridCell.CellState.EMPTY) {
+				game.shoot(moveRow, moveCol);
+				selectedCell.setState(GridCell.CellState.MISS);
+				
+			}
+			if(selectedCell.getState()==GridCell.CellState.SHIP) {
+				//signal change in gameboardGUI
+				Ship[] AIshipArr = AiPlayer.getShipArr();
+				selectedCell.setState(GridCell.CellState.HIT);
+				game.shoot(moveRow, moveCol);
+				
+			}		
+
+			
+		}
+
+		
+
+	}
+	
+
+}
