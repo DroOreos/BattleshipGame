@@ -9,7 +9,7 @@ public abstract class AbstractPlayer {
     protected int misses;
     
     private int num_shipsAlive;
-    protected Ship[] ships = new Ship[1];
+    protected Ship[] ships = new Ship[5];
     
     protected Gameboard game; //place our ships here 
     protected Gameboard opponent_game; // send out attacks here
