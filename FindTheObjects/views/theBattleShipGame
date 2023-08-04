@@ -19,8 +19,8 @@ public class theBattleShipGame extends Observable{
  private Gameboard o_board;
  
 /**
-     * Constructs theBattleShipGame and sets up the game boards and players.
-     */ 
+    * Constructs theBattleShipGame and sets up the game boards and players.
+*/ 
  public theBattleShipGame() {
 	 p_board = new Gameboard(10,10);
 	 o_board = new Gameboard(10,10);

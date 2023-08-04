@@ -1,3 +1,4 @@
+//Brandon Webb
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
@@ -6,30 +7,41 @@ import org.junit.Test;
 public class GridCellTest {
 
     private GridCell gridCell;
-
+    /**
+     * Sets up a new GridCell instance before each test.
+     */
     @Before
     public void setUp() {
         // Create a new GridCell instance before each test
         gridCell = new GridCell(3, 5);
     }
-
+    /**
+     * Tests the {@link GridCell#getX()} method.
+     */
     @Test
     public void testGetX() {
         // Test the getX() method
         assertEquals(3, gridCell.getX());
     }
-
+    /**
+     * Tests the {@link GridCell#getY()} method.
+     */
     @Test
     public void testGetY() {
         // Test the getY() method
         assertEquals(5, gridCell.getY());
     }
-
+    /**
+     * Tests the {@link GridCell#getState()} method.
+     */
     @Test
     public void testGetState() {
         // Test the getState() method
         assertEquals(GridCell.CellState.EMPTY, gridCell.getState());
     }
+    /**
+     * Tests the {@link GridCell#setState(GridCell.CellState)} method.
+     */
 
     @Test
     public void testSetState() {
@@ -43,7 +55,9 @@ public class GridCellTest {
         gridCell.setState(GridCell.CellState.MISS);
         assertEquals(GridCell.CellState.MISS, gridCell.getState());
     }
-
+    /**
+     * Tests the {@link GridCell#setState(GridCell.CellState)} method by setting the state to {@link GridCell.CellState#EMPTY}.
+     */
     @Test
     public void testSetStateWithEmpty() {
         // Test setting the state to EMPTY
@@ -51,7 +65,9 @@ public class GridCellTest {
         gridCell.setState(GridCell.CellState.EMPTY);
         assertEquals(GridCell.CellState.EMPTY, gridCell.getState());
     }
-
+    /**
+     * Tests the {@link GridCell#setState(GridCell.CellState)} method by setting the state to {@code null}.
+     */
     @Test
     public void testSetStateWithNull() {
         // Test setting the state to null
@@ -59,7 +75,9 @@ public class GridCellTest {
         gridCell.setState(null);
         assertEquals(GridCell.CellState.HIT, gridCell.getState());
     }
-
+    /**
+     * Tests the {@link GridCell#setState(GridCell.CellState)} method by setting the state multiple times.
+     */
     @Test
     public void testSetStateMultipleTimes() {
         // Test setting the state multiple times
@@ -70,4 +88,3 @@ public class GridCellTest {
         assertEquals(GridCell.CellState.EMPTY, gridCell.getState());
     }
 }
-
