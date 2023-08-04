@@ -30,12 +30,14 @@ public class HumanPlayer extends AbstractPlayer {
 						break;
 	
 					cell.setState(GridCell.CellState.SHIP);
-					cell = arrForShip[x+i];
+					arrForShip[i] = cell;
 					
 				}
-				Ship newShip = new Ship(arrForShip);
-				ships[getNum_shipsAlive()]=newShip;
-				setNum_shipsAlive(getNum_shipsAlive() + 1);
+				if(arrForShip[length-1]!=null) {
+					Ship newShip = new Ship(arrForShip);
+					ships[num_shipsAlive]=newShip;
+					num_shipsAlive++;
+				}
 			}
 			else {
 				for(int i =0; i<length;i++) {
@@ -44,15 +46,42 @@ public class HumanPlayer extends AbstractPlayer {
 						break;
 					
 					cell.setState(GridCell.CellState.SHIP);
-					cell = arrForShip[x+i];
+					arrForShip[i] = cell;
 					
 				}
-				Ship newShip = new Ship(arrForShip);
-				ships[getNum_shipsAlive()]=newShip;
-				setNum_shipsAlive(getNum_shipsAlive() + 1);
+				if(arrForShip[length-1]!=null) {
+					Ship newShip = new Ship(arrForShip);
+					ships[num_shipsAlive]=newShip;
+					num_shipsAlive++;
+				}
 				
 			}
 		}	
+	}
+	public void delete(Gameboard game) {
+		Ship curShip = ships[getNum_shipsAlive()-1];
+		boolean curOrientation = curShip.orenation;
+		int length = curShip.length;
+		int x = curShip.getShipArr()[1].getX();
+		int y = curShip.getShipArr()[1].getY();
+
+		if (curOrientation) {
+			for(int i =0; i<length;i++) {
+				GridCell cell =	game.getGridCell(x+i,y);
+				cell.setState(GridCell.CellState.EMPTY);
+			}
+		}
+		else {
+			for(int i =0; i<length;i++) {
+				GridCell cell =	game.getGridCell(x,y+i);
+				cell.setState(GridCell.CellState.EMPTY);
+			}
+		}
+		
+		
+		ships[getNum_shipsAlive()-1]=null;
+		setNum_shipsAlive(getNum_shipsAlive() - 1);
+		
 	}
 	
 	private boolean isValid(int x, int y,int length,boolean orientation) {
