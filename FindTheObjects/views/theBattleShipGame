@@ -1,64 +1,170 @@
-//Brandon Webb
-import java.util.Observable;
-import java.util.Observer;
+// Brandon Webb
 
-public class theBattleShipGame extends Observable {
-    private GridCell[][] battleShipBoard;
-    private AbstractPlayer player1;
-    private AbstractPlayer player2;
-    private boolean isGameOver;
+import java.util.Scanner;
+import java.util.Random;
 
-    public theBattleShipGame(AbstractPlayer player1, AbstractPlayer player2) {
-        this.player1 = player1;
-        this.player2 = player2;
-        player1.updateAllGameboards(new Gameboard(), new Gameboard());
-        player2.updateAllGameboards(new Gameboard(), new Gameboard());
-        battleShipBoard = new GridCell[10][10];
-        initializeBattleShipBoard();
-    }
+public class theBattleShipGame extends Observable{
+    private static Random random = new Random();
+    private AbstractPlayer humanPlayer;
+    private AbstractPlayer aiPlayer;
 
-    private void initializeBattleShipBoard() {
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                battleShipBoard[i][j] = new GridCell(i, j);
+    public theBattleShipGame() {
+        // Step 1: Set up the game
+        int rows = 10;
+        int cols = 10;
+        Gameboard playerBoard = new Gameboard(rows, cols);
+        Gameboard opponentBoard = new Gameboard(rows, cols);
+
+        // Step 2: Place ships for the human player
+        humanPlayer = new HumanPlayer("Player 1");
+        humanPlayer.updateAllGameboards(playerBoard, opponentBoard);
+        ((HumanPlayer) humanPlayer).placeShipsConsole(playerBoard); // Cast down
+
+        // Step 3: Place ships for the AI player (random placement)
+        // aiPlayer = new AIPlayerRandom("AI Player");
+        // aiPlayer.updateAllGameboards(playerBoard, opponentBoard);
+        // ((AIPlayerRandom) aiPlayer).placeShips(opponentBoard);
+
+        // Using the mock AI Player
+        aiPlayer = new MockAI("AI Player", rows, cols);
+        aiPlayer.updateAllGameboards(playerBoard, opponentBoard);
+        ((MockAI) aiPlayer).placeShips(opponentBoard);
+
+        // Step 4: Game starts here:
+        boolean isGameOver = false;
+
+        while (!isGameOver) {
+
+            // Player's turn
+            int row, col;
+
+            do {
+                System.out.println("Enter coordinates to shoot: (row, col)");
+                String input = new Scanner(System.in).nextLine();
+                row = getRow(input);
+                col = getCol(input);
+            } while (row == -1 || col == -1);
+
+            // Make player move and update the boards
+            humanPlayer.makeMoveConsole(row, col);
+            humanPlayer.updateAllGameboards(playerBoard, opponentBoard);
+
+            // Check if the player has won
+            if (humanPlayer.hasWon()) {
+                System.out.println(humanPlayer.getName() + " won!");
+                isGameOver = true;
+                break;
+            }
+
+            // AI's turn
+            int aiRow = random.nextInt(rows);
+            int aiCol = random.nextInt(cols);
+            aiPlayer.makeMoveConsole(aiRow, aiCol);
+            aiPlayer.updateAllGameboards(playerBoard, opponentBoard);
+
+            // PRINT THE BOARD HERE:
+            printAIBoard(opponentBoard);
+            printPlayerBoard(playerBoard);
+
+            // Check if the AI has won
+            if (aiPlayer.hasWon()) {
+                System.out.println("AI Player won!");
+                isGameOver = true;
+                break;
             }
         }
     }
 
-    public GridCell[][] getBattleShipBoard() {
-        return battleShipBoard;
+   // ... (other parts of theBattleShipGame class)
+
+private static void printPlayerBoard(Gameboard playerBoard) {
+    GridCell[][] gridBoard = playerBoard.getGrid();
+
+    System.out.println("\nYour Board:");
+    System.out.print("  ");
+    for (int col = 0; col < gridBoard[0].length; col++) {
+        System.out.print(col + " ");
     }
+    System.out.println();
 
-    public AbstractPlayer getPlayer1() {
-        return player1;
-    }
-
-    public AbstractPlayer getPlayer2() {
-        return player2;
-    }
-
-    // Implement your game logic here
-    // For example, methods for ship placement, attacks, and game state management
-
-    // Add other methods and logic as needed
-
-    // For demonstration purposes, let's add a method to simulate a random attack
-    public void simulateRandomAttack() {
-        int randomRow = (int) (Math.random() * 10);
-        int randomCol = (int) (Math.random() * 10);
-
-        GridCell cell = battleShipBoard[randomRow][randomCol];
-
-        if (cell.getState() == GridCell.CellState.SHIP) {
-            cell.setState(GridCell.CellState.HIT);
-        } else {
-            cell.setState(GridCell.CellState.MISS);
+    char rowChar = 'A';
+    for (int row = 0; row < gridBoard.length; row++) {
+        System.out.print(rowChar + " ");
+        for (int col = 0; col < gridBoard[row].length; col++) {
+            GridCell.CellState state = gridBoard[row][col].getState();
+            char cellChar = '~';
+            switch (state) {
+                case EMPTY:
+                    cellChar = '~';
+                    break;
+                case SHIP:
+                    cellChar = 'S';
+                    break;
+                case HIT:
+                    cellChar = 'H';
+                    break;
+                case MISS:
+                    cellChar = 'M';
+                    break;
+            }
+            System.out.print(cellChar + " ");
         }
+        System.out.println();
+        rowChar++;
+    }
+}
 
-        // Notify the observers (e.g., BattleShipView) that the game state has changed
-        setChanged();
-        notifyObservers();
+private static void printAIBoard(Gameboard opponentBoard) {
+    GridCell[][] gridBoard = opponentBoard.getGrid();
+
+    System.out.println("\nAI Board:");
+    System.out.print("  ");
+    for (int col = 0; col < gridBoard[0].length; col++) {
+        System.out.print(col + " ");
+    }
+    System.out.println();
+
+    char rowChar = 'A';
+    for (int row = 0; row < gridBoard.length; row++) {
+        System.out.print(rowChar + " ");
+        for (int col = 0; col < gridBoard[row].length; col++) {
+            GridCell.CellState state = gridBoard[row][col].getState();
+            char cellChar;
+            if (state == GridCell.CellState.HIT) {
+                cellChar = 'H';
+            } else if (state == GridCell.CellState.MISS) {
+                cellChar = 'M';
+            } else {
+                cellChar = '~'; // Hide ships for AI board
+            }
+            System.out.print(cellChar + " ");
+        }
+        System.out.println();
+        rowChar++;
+    }
+}
+
+    private static int getRow(String input) {
+        String[] parts = input.split("\\s+");
+        char row_c = parts[0].toUpperCase().charAt(0);
+        int value = row_c - 'A';
+        return inputValidation(value);
     }
 
-    // Implement other game logic methods, such as ship placement, player attacks, game state management, etc.
+    private static int getCol(String input) {
+        String[] parts = input.split("\\s+");
+        int col = Integer.parseInt(parts[1]);
+        return inputValidation(col);
+    }
+
+    private static int inputValidation(int value) {
+        if (value >= 0 && value <= 9) {
+            return value;
+        }
+        return -1;
+    }
+
+    public static void main(String[] args) {
+        new theBattleShipGame();
+    }
 }
