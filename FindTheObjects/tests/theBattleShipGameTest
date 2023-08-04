@@ -1,0 +1,129 @@
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+
+public class theBattleShipGameTest {
+
+    private theBattleShipGame game;
+
+    @Before
+    public void setUp() {
+        game = new theBattleShipGame();
+    }
+
+    @Test
+    public void testGetPlayerBoard() {
+        assertNotNull(game.get_playerB());
+    }
+
+    @Test
+    public void testGetOpponentBoard() {
+        assertNotNull(game.get_opponentB());
+    }
+
+    @Test
+    public void testSetPAttack() {
+        game.setPAttack(2, 3);
+        assertEquals(GridCell.CellState.MISS, game.get_opponentB().getCell(2, 3).getState());
+    }
+
+    @Test
+    public void testSetOAttack() {
+        game.setOAttack(5, 6);
+        assertEquals(GridCell.CellState.MISS, game.get_playerB().getCell(5, 6).getState());
+    }
+
+    @Test
+    public void testGetHumanPlayer() {
+        assertNotNull(game.getHumanPlayer());
+        assertTrue(game.getHumanPlayer() instanceof HumanPlayer);
+    }
+
+    @Test
+    public void testGetAIPlayer() {
+        assertNotNull(game.getAIPlayer());
+        assertTrue(game.getAIPlayer() instanceof MockAI);
+    }
+
+    @Test
+    public void testGetRowValidInput() {
+        assertEquals(0, theBattleShipGame.getRow("A 0"));
+    }
+
+    @Test
+    public void testGetRowInvalidInput() {
+        assertEquals(-1, theBattleShipGame.getRow("Z 9"));
+    }
+
+    @Test
+    public void testGetColValidInput() {
+        assertEquals(9, theBattleShipGame.getCol("A 9"));
+    }
+
+    @Test
+    public void testGetColInvalidInput() {
+        assertEquals(-1, theBattleShipGame.getCol("A 10"));
+    }
+
+    @Test
+    public void testGetHumanPlayerName() {
+        assertEquals("bot", game.getHumanPlayer().getName());
+    }
+
+    @Test
+    public void testGetAIPlayerName() {
+        assertEquals("ai", game.getAIPlayer().getName());
+    }
+
+    @Test
+    public void testGetPlayerBoardSize() {
+        assertEquals(10, game.get_playerB().getRows());
+        assertEquals(10, game.get_playerB().getCols());
+    }
+
+    @Test
+    public void testGetOpponentBoardSize() {
+        assertEquals(10, game.get_opponentB().getRows());
+        assertEquals(10, game.get_opponentB().getCols());
+    }
+
+    @Test
+    public void testPlayerAttackHit() {
+        game.get_opponentB().placeShip(2, 3, 1, true);
+        game.setPAttack(2, 3);
+        assertEquals(GridCell.CellState.HIT, game.get_opponentB().getCell(2, 3).getState());
+    }
+
+    @Test
+    public void testPlayerAttackMiss() {
+        game.setPAttack(4, 5);
+        assertEquals(GridCell.CellState.MISS, game.get_opponentB().getCell(4, 5).getState());
+    }
+
+    @Test
+    public void testAIAttackHit() {
+        game.get_playerB().placeShip(7, 8, 1, true);
+        game.setOAttack(7, 8);
+        assertEquals(GridCell.CellState.HIT, game.get_playerB().getCell(7, 8).getState());
+    }
+
+    @Test
+    public void testAIAttackMiss() {
+        game.setOAttack(0, 0);
+        assertEquals(GridCell.CellState.MISS, game.get_playerB().getCell(0, 0).getState());
+    }
+
+    @Test
+    public void testPlayerWin() {
+        game.get_opponentB().placeShip(3, 3, 1, true);
+        game.setPAttack(3, 3);
+        assertTrue(game.getHumanPlayer().hasWon());
+    }
+
+    @Test
+    public void testAIWin() {
+        game.get_playerB().placeShip(6, 6, 1, true);
+        game.setOAttack(6, 6);
+        assertTrue(game.getAIPlayer().hasWon());
+    }
+}

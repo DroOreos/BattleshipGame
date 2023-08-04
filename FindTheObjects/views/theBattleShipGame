@@ -7,7 +7,9 @@ import model.Gameboard;
 import model.Observer;
 import model.Observable;
 
-
+/**
+ * Represents the Battleship game logic and flow.
+ */
 public class theBattleShipGame extends Observable{
 	
  private static Random random = new Random();
@@ -16,7 +18,9 @@ public class theBattleShipGame extends Observable{
  private Gameboard p_board;
  private Gameboard o_board;
  
- 
+/**
+     * Constructs theBattleShipGame and sets up the game boards and players.
+     */ 
  public theBattleShipGame() {
 	 p_board = new Gameboard(10,10);
 	 o_board = new Gameboard(10,10);
@@ -30,32 +34,58 @@ public class theBattleShipGame extends Observable{
 	 aiPlayer.updateOpponentBoard(o_board);
 	 aiPlayer.updateStatusOfBoard(p_board);
  }
- 
+/**
+     * Gets the player's game board.
+     *
+     * @return The player's game board.
+     */
  public Gameboard get_playerB() {
 	 return this.p_board;
  }
- 
+/**
+     * Gets the opponent's game board.
+     *
+     * @return The opponent's game board.
+     */
  public Gameboard get_opponentB() {
 	 return this.o_board;
  }
- 
+/**
+     * Sets the player's attack on the opponent's board.
+     *
+     * @param r The row number of the target location.
+     * @param c The column number of the target location.
+     */
  public void setPAttack(int r, int c) {
 	 humanPlayer.updateAllGameboards(p_board, o_board);
 	 o_board.shoot(r, c);
 	 humanPlayer.updateAllGameboards(p_board, o_board);
  }
+/**
+     * Sets the AI player's attack on the player's board.
+     *
+     * @param r The row number of the target location.
+     * @param c The column number of the target location.
+     */
  public void setOAttack(int r, int c) {
 
 	 aiPlayer.updateAllGameboards(o_board, p_board);
 	 aiPlayer.makeMoveGUI();
 	 aiPlayer.updateAllGameboards(o_board, p_board);
  }
- 
- 
+/**
+     * Gets the human player.
+     *
+     * @return The human player.
+     */
  public HumanPlayer getHumanPlayer() {
 	 return (HumanPlayer) this.humanPlayer;
  }
- 
+/**
+     * Gets the AI player.
+     *
+     * @return The AI player.
+     */
  public AbstractPlayer getAIPlayer() {
 	 return this.aiPlayer;
  }
@@ -128,8 +158,11 @@ public class theBattleShipGame extends Observable{
      }
  }*/
 
-// ... (other parts of theBattleShipGame class)
-
+/**
+     * Prints the player board to the console, showing ships' locations, hits, and misses from AI.
+     *
+     * @param playerBoard The player's game board.
+     */
 private static void printPlayerBoard(Gameboard playerBoard) {
  GridCell[][] gridBoard = playerBoard.getGrid();
 
@@ -166,7 +199,11 @@ private static void printPlayerBoard(Gameboard playerBoard) {
      rowChar++;
  }
 }
-
+/**
+     * Prints the AI board to the console, hiding the ships' locations but showing hits or misses.
+     *
+     * @param opponentBoard The opponent's game board.
+     */
 private static void printAIBoard(Gameboard opponentBoard) {
  GridCell[][] gridBoard = opponentBoard.getGrid();
 
@@ -196,27 +233,44 @@ private static void printAIBoard(Gameboard opponentBoard) {
      rowChar++;
  }
 }
-
+/**
+     * Converts user input to a row number.
+     *
+     * @param input The user input in the format "A 0" where A is the row and 0 is the column.
+     * @return The row number.
+     */
  private static int getRow(String input) {
      String[] parts = input.split("\\s+");
      char row_c = parts[0].toUpperCase().charAt(0);
      int value = row_c - 'A';
      return inputValidation(value);
  }
-
+/**
+     * Converts user input to a column number.
+     *
+     * @param input The user input in the format "A 0" where A is the row and 0 is the column.
+     * @return The column number.
+     */
  private static int getCol(String input) {
      String[] parts = input.split("\\s+");
      int col = Integer.parseInt(parts[1]);
      return inputValidation(col);
  }
-
+/**
+     * Validates user input.
+     *
+     * @param value The value to validate.
+     * @return The validated value if it is within the range [0, 9], otherwise -1.
+     */
  private static int inputValidation(int value) {
      if (value >= 0 && value <= 9) {
          return value;
      }
      return -1;
  }
-
+/** 
+ * 
+ */
 public HumanPlayer getPlayer1() {
 	// TODO Auto-generated method stub
 	return null;
