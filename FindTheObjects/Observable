@@ -1,0 +1,15 @@
+import java.util.ArrayList;
+
+public class Observable extends Observer {
+  ArrayList<Observer> observers = new ArrayList<>();
+  
+  public void addObserver(Observer anObserver) {
+    observers.add(anObserver);
+  }
+ 
+  public void notifyObservers(Observable theObservable) {
+    for(Observer obs : observers) {
+      obs.update(theObservable);
+    }
+  }
+}
