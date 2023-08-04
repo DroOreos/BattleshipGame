@@ -54,6 +54,32 @@ public class HumanPlayer extends AbstractPlayer {
 			}
 		}	
 	}
+
+	public void delete(Gameboard game) {
+		Ship curShip = shipArr[getNum_shipsAlive()-1];
+		boolean curOrientation = curShip.orenation;
+		int length = curShip.length;
+		int x = curShip.getShipArr()[1].getX();
+		int y = curShip.getShipArr()[1].getY();
+
+		if (curOrientation) {
+			for(int i =0; i<length;i++) {
+				GridCell cell =	game.getGridCell(x+i,y);
+				cell.setState(GridCell.CellState.EMPTY);
+			}
+		}
+		else {
+			for(int i =0; i<length;i++) {
+				GridCell cell =	game.getGridCell(x,y+i);
+				cell.setState(GridCell.CellState.EMPTY);
+			}
+		}
+		
+		
+		shipArr[getNum_shipsAlive()-1]=null;
+		num_shipsAlive = getNum_shipsAlive() - 1;
+		
+	}
 	private boolean isValid(int x, int y,int length,boolean orientation) {
 		// TODO Auto-generated method stub
 		if(orientation) {
