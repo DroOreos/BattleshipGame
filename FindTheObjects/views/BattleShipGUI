@@ -43,6 +43,9 @@ public class BattleShipGUI extends Application {
 		
 		theBattleShipGame theGame = new theBattleShipGame();
 		BattleShipView battleShipView = new BattleShipView();
+		BattleShipListeners listeners = new BattleShipListeners(scene,battleShipView.playerBoardCanvas,battleShipView.opponentBoardCanvas,theGame);
+		listeners.handlers();
+
 		theGame.addObserver(battleShipView);
 
        	window = new BorderPane();
