@@ -1,170 +1,228 @@
-// Brandon Webb
+
+//Brandon Webb
 
 import java.util.Scanner;
 import java.util.Random;
+import model.Gameboard;
+import model.Observer;
+import model.Observable;
+
 
 public class theBattleShipGame extends Observable{
-    private static Random random = new Random();
-    private AbstractPlayer humanPlayer;
-    private AbstractPlayer aiPlayer;
+	
+ private static Random random = new Random();
+ private AbstractPlayer humanPlayer;
+ private AbstractPlayer aiPlayer;
+ private Gameboard p_board;
+ private Gameboard o_board;
+ 
+ 
+ public theBattleShipGame() {
+	 p_board = new Gameboard(10,10);
+	 o_board = new Gameboard(10,10);
+	 
+	 humanPlayer = new HumanPlayer("bot");
+	 aiPlayer = new MockAI("ai",10,10);
+	 
+	 humanPlayer.updateStatusOfBoard(p_board);
+	 humanPlayer.updateOpponentBoard(o_board);
+	 
+	 aiPlayer.updateOpponentBoard(o_board);
+	 aiPlayer.updateStatusOfBoard(p_board);
+ }
+ 
+ public Gameboard get_playerB() {
+	 return this.p_board;
+ }
+ 
+ public Gameboard get_opponentB() {
+	 return this.o_board;
+ }
+ 
+ public void setPAttack(int r, int c) {
+	 humanPlayer.updateAllGameboards(p_board, o_board);
+	 o_board.shoot(r, c);
+	 humanPlayer.updateAllGameboards(p_board, o_board);
+ }
+ public void setOAttack(int r, int c) {
 
-    public theBattleShipGame() {
-        // Step 1: Set up the game
-        int rows = 10;
-        int cols = 10;
-        Gameboard playerBoard = new Gameboard(rows, cols);
-        Gameboard opponentBoard = new Gameboard(rows, cols);
+	 aiPlayer.updateAllGameboards(o_board, p_board);
+	 aiPlayer.makeMoveGUI();
+	 aiPlayer.updateAllGameboards(o_board, p_board);
+ }
+ 
+ 
+ public HumanPlayer getHumanPlayer() {
+	 return (HumanPlayer) this.humanPlayer;
+ }
+ 
+ public AbstractPlayer getAIPlayer() {
+	 return this.aiPlayer;
+ }
+/*
+ * 
+ public theBattleShipGame() {
+     // Step 1: Set up the game
+     int rows = 10;
+     int cols = 10;
+     Gameboard playerBoard = new Gameboard(rows, cols);
+     Gameboard opponentBoard = new Gameboard(rows, cols);
 
-        // Step 2: Place ships for the human player
-        humanPlayer = new HumanPlayer("Player 1");
-        humanPlayer.updateAllGameboards(playerBoard, opponentBoard);
-        ((HumanPlayer) humanPlayer).placeShipsConsole(playerBoard); // Cast down
+     // Step 2: Place ships for the human player
+     humanPlayer = new HumanPlayer("Player 1");
+     humanPlayer.updateAllGameboards(playerBoard, opponentBoard);
+     ((HumanPlayer) humanPlayer).placeShipsConsole(playerBoard); // Cast down
 
-        // Step 3: Place ships for the AI player (random placement)
-        // aiPlayer = new AIPlayerRandom("AI Player");
-        // aiPlayer.updateAllGameboards(playerBoard, opponentBoard);
-        // ((AIPlayerRandom) aiPlayer).placeShips(opponentBoard);
+     // Step 3: Place ships for the AI player (random placement)
+     // aiPlayer = new AIPlayerRandom("AI Player");
+     // aiPlayer.updateAllGameboards(playerBoard, opponentBoard);
+     // ((AIPlayerRandom) aiPlayer).placeShips(opponentBoard);
 
-        // Using the mock AI Player
-        aiPlayer = new MockAI("AI Player", rows, cols);
-        aiPlayer.updateAllGameboards(playerBoard, opponentBoard);
-        ((MockAI) aiPlayer).placeShips(opponentBoard);
+     // Using the mock AI Player
+     aiPlayer = new MockAI("AI Player", rows, cols);
+     aiPlayer.updateAllGameboards(playerBoard, opponentBoard);
+     ((MockAI) aiPlayer).placeShips(opponentBoard);
 
-        // Step 4: Game starts here:
-        boolean isGameOver = false;
+     // Step 4: Game starts here:
+     boolean isGameOver = false;
 
-        while (!isGameOver) {
+     while (!isGameOver) {
 
-            // Player's turn
-            int row, col;
+         // Player's turn
+         int row, col;
 
-            do {
-                System.out.println("Enter coordinates to shoot: (row, col)");
-                String input = new Scanner(System.in).nextLine();
-                row = getRow(input);
-                col = getCol(input);
-            } while (row == -1 || col == -1);
+         do {
+             System.out.println("Enter coordinates to shoot: (row, col)");
+             String input = new Scanner(System.in).nextLine();
+             row = getRow(input);
+             col = getCol(input);
+         } while (row == -1 || col == -1);
 
-            // Make player move and update the boards
-            humanPlayer.makeMoveConsole(row, col);
-            humanPlayer.updateAllGameboards(playerBoard, opponentBoard);
+         // Make player move and update the boards
+         humanPlayer.makeMoveConsole(row, col);
+         humanPlayer.updateAllGameboards(playerBoard, opponentBoard);
 
-            // Check if the player has won
-            if (humanPlayer.hasWon()) {
-                System.out.println(humanPlayer.getName() + " won!");
-                isGameOver = true;
-                break;
-            }
+         // Check if the player has won
+         if (humanPlayer.hasWon()) {
+             System.out.println(humanPlayer.getName() + " won!");
+             isGameOver = true;
+             break;
+         }
 
-            // AI's turn
-            int aiRow = random.nextInt(rows);
-            int aiCol = random.nextInt(cols);
-            aiPlayer.makeMoveConsole(aiRow, aiCol);
-            aiPlayer.updateAllGameboards(playerBoard, opponentBoard);
+         // AI's turn
+         int aiRow = random.nextInt(rows);
+         int aiCol = random.nextInt(cols);
+         aiPlayer.makeMoveConsole(aiRow, aiCol);
+         aiPlayer.updateAllGameboards(playerBoard, opponentBoard);
 
-            // PRINT THE BOARD HERE:
-            printAIBoard(opponentBoard);
-            printPlayerBoard(playerBoard);
+         // PRINT THE BOARD HERE:
+         printAIBoard(opponentBoard);
+         printPlayerBoard(playerBoard);
 
-            // Check if the AI has won
-            if (aiPlayer.hasWon()) {
-                System.out.println("AI Player won!");
-                isGameOver = true;
-                break;
-            }
-        }
-    }
+         // Check if the AI has won
+         if (aiPlayer.hasWon()) {
+             System.out.println("AI Player won!");
+             isGameOver = true;
+             break;
+         }
+     }
+ }*/
 
-   // ... (other parts of theBattleShipGame class)
+// ... (other parts of theBattleShipGame class)
 
 private static void printPlayerBoard(Gameboard playerBoard) {
-    GridCell[][] gridBoard = playerBoard.getGrid();
+ GridCell[][] gridBoard = playerBoard.getGrid();
 
-    System.out.println("\nYour Board:");
-    System.out.print("  ");
-    for (int col = 0; col < gridBoard[0].length; col++) {
-        System.out.print(col + " ");
-    }
-    System.out.println();
+ System.out.println("\nYour Board:");
+ System.out.print("  ");
+ for (int col = 0; col < gridBoard[0].length; col++) {
+     System.out.print(col + " ");
+ }
+ System.out.println();
 
-    char rowChar = 'A';
-    for (int row = 0; row < gridBoard.length; row++) {
-        System.out.print(rowChar + " ");
-        for (int col = 0; col < gridBoard[row].length; col++) {
-            GridCell.CellState state = gridBoard[row][col].getState();
-            char cellChar = '~';
-            switch (state) {
-                case EMPTY:
-                    cellChar = '~';
-                    break;
-                case SHIP:
-                    cellChar = 'S';
-                    break;
-                case HIT:
-                    cellChar = 'H';
-                    break;
-                case MISS:
-                    cellChar = 'M';
-                    break;
-            }
-            System.out.print(cellChar + " ");
-        }
-        System.out.println();
-        rowChar++;
-    }
+ char rowChar = 'A';
+ for (int row = 0; row < gridBoard.length; row++) {
+     System.out.print(rowChar + " ");
+     for (int col = 0; col < gridBoard[row].length; col++) {
+         GridCell.CellState state = gridBoard[row][col].getState();
+         char cellChar = '~';
+         switch (state) {
+             case EMPTY:
+                 cellChar = '~';
+                 break;
+             case SHIP:
+                 cellChar = 'S';
+                 break;
+             case HIT:
+                 cellChar = 'H';
+                 break;
+             case MISS:
+                 cellChar = 'M';
+                 break;
+         }
+         System.out.print(cellChar + " ");
+     }
+     System.out.println();
+     rowChar++;
+ }
 }
 
 private static void printAIBoard(Gameboard opponentBoard) {
-    GridCell[][] gridBoard = opponentBoard.getGrid();
+ GridCell[][] gridBoard = opponentBoard.getGrid();
 
-    System.out.println("\nAI Board:");
-    System.out.print("  ");
-    for (int col = 0; col < gridBoard[0].length; col++) {
-        System.out.print(col + " ");
-    }
-    System.out.println();
+ System.out.println("\nAI Board:");
+ System.out.print("  ");
+ for (int col = 0; col < gridBoard[0].length; col++) {
+     System.out.print(col + " ");
+ }
+ System.out.println();
 
-    char rowChar = 'A';
-    for (int row = 0; row < gridBoard.length; row++) {
-        System.out.print(rowChar + " ");
-        for (int col = 0; col < gridBoard[row].length; col++) {
-            GridCell.CellState state = gridBoard[row][col].getState();
-            char cellChar;
-            if (state == GridCell.CellState.HIT) {
-                cellChar = 'H';
-            } else if (state == GridCell.CellState.MISS) {
-                cellChar = 'M';
-            } else {
-                cellChar = '~'; // Hide ships for AI board
-            }
-            System.out.print(cellChar + " ");
-        }
-        System.out.println();
-        rowChar++;
-    }
+ char rowChar = 'A';
+ for (int row = 0; row < gridBoard.length; row++) {
+     System.out.print(rowChar + " ");
+     for (int col = 0; col < gridBoard[row].length; col++) {
+         GridCell.CellState state = gridBoard[row][col].getState();
+         char cellChar;
+         if (state == GridCell.CellState.HIT) {
+             cellChar = 'H';
+         } else if (state == GridCell.CellState.MISS) {
+             cellChar = 'M';
+         } else {
+             cellChar = '~'; // Hide ships for AI board
+         }
+         System.out.print(cellChar + " ");
+     }
+     System.out.println();
+     rowChar++;
+ }
 }
 
-    private static int getRow(String input) {
-        String[] parts = input.split("\\s+");
-        char row_c = parts[0].toUpperCase().charAt(0);
-        int value = row_c - 'A';
-        return inputValidation(value);
-    }
+ private static int getRow(String input) {
+     String[] parts = input.split("\\s+");
+     char row_c = parts[0].toUpperCase().charAt(0);
+     int value = row_c - 'A';
+     return inputValidation(value);
+ }
 
-    private static int getCol(String input) {
-        String[] parts = input.split("\\s+");
-        int col = Integer.parseInt(parts[1]);
-        return inputValidation(col);
-    }
+ private static int getCol(String input) {
+     String[] parts = input.split("\\s+");
+     int col = Integer.parseInt(parts[1]);
+     return inputValidation(col);
+ }
 
-    private static int inputValidation(int value) {
-        if (value >= 0 && value <= 9) {
-            return value;
-        }
-        return -1;
-    }
+ private static int inputValidation(int value) {
+     if (value >= 0 && value <= 9) {
+         return value;
+     }
+     return -1;
+ }
 
-    public static void main(String[] args) {
-        new theBattleShipGame();
-    }
+public HumanPlayer getPlayer1() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+ //public static void main(String[] args) {
+  //   new theBattleShipGame();
+ //}
 }

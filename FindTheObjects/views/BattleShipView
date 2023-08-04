@@ -1,4 +1,5 @@
 
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -14,9 +15,11 @@ import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.animation.PathTransition;
 import javafx.util.Duration;
+import model.Gameboard;
 import model.GridCell;
 import model.Ship;
 import model.theBattleShipGame;
@@ -87,8 +90,9 @@ public class BattleShipView extends BorderPane implements Observer {
 	private Canvas playerBoardCanvas = new Canvas(BOARD_WIDTH, BOARD_HEIGHT);
 	private Canvas opponentBoardCanvas = new Canvas(BOARD_WIDTH, BOARD_HEIGHT);
 
-	private Array player_grid[][];
-	private Array opponent_grid[][];
+	private GridCell[][] playerB;
+	private GridCell[][] opponentB;
+
 	private theBattleShipGame theGame;
 
 	/**
@@ -96,17 +100,9 @@ public class BattleShipView extends BorderPane implements Observer {
 	 * 
 	 * @param theGame - current state of the battleship game
 	 */
-//	public BattleShipView(BattleShipGame theGame) {
-//		this.theGame = theGame;	
-//	}
 	public BattleShipView(theBattleShipGame theGame) {
 		this.theGame = theGame;
-		theGame.addObserver(this);
-
 		initializeBackround();
-
-		player_grid = new Array[BOARD_ROWS][BOARD_COLS];
-		opponent_grid = new Array[BOARD_ROWS][BOARD_COLS];
 
 		initializeAllPanel();
 
@@ -116,8 +112,9 @@ public class BattleShipView extends BorderPane implements Observer {
 
 		setUpPlayerShips();
 
-		handlers();
+		//handlers();
 	}
+
 
 	private void initializeBackround() {
 		try {
@@ -139,25 +136,25 @@ public class BattleShipView extends BorderPane implements Observer {
 	}
 
 	private void initializeAllPanel() {
-		this.setTop(opponentBoardCanvas);
-		this.setBottom(playerBoardCanvas);
+		this.setTop(getOpponentBoardCanvas());
+		this.setBottom(getPlayerBoardCanvas());
 
-		this.setAlignment(opponentBoardCanvas, Pos.BOTTOM_CENTER);
-		this.setAlignment(playerBoardCanvas, Pos.TOP_CENTER);
+		this.setAlignment(getOpponentBoardCanvas(), Pos.BOTTOM_CENTER);
+		this.setAlignment(getPlayerBoardCanvas(), Pos.TOP_CENTER);
 		try {
 			// Load the water image
 			URL imageUrl = new URL("https://thumbs.dreamstime.com/b/pixel-art-water-pool-background-213938739.jpg");
 
 			waterCell_Image = new Image(imageUrl.toString());
 
-			setCells(opponentBoardCanvas);
-			setCells(playerBoardCanvas);
+			setCells(getOpponentBoardCanvas());
+			setCells(getPlayerBoardCanvas());
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
 
-		drawB(opponentBoardCanvas);
-		drawB(playerBoardCanvas);
+		drawB(getOpponentBoardCanvas());
+		drawB(getPlayerBoardCanvas());
 	}
 
 	private void initializeImages() {
@@ -169,7 +166,7 @@ public class BattleShipView extends BorderPane implements Observer {
 
 		try {
 
-			GraphicsContext gc = playerBoardCanvas.getGraphicsContext2D();
+			GraphicsContext gc = getPlayerBoardCanvas().getGraphicsContext2D();
 			URL hit = new URL("https://image.pngaaa.com/588/355588-middle.png");
 			hit_Image = new Image(hit.toString());
 
@@ -236,7 +233,7 @@ public class BattleShipView extends BorderPane implements Observer {
 			rocket_Image.setFitWidth(CELL_WIDTH);
 			rocket_Image.setFitHeight(CELL_HEIGHT);
 
-			opponentPane = new Pane(opponentBoardCanvas, rocket_Image);
+			opponentPane = new Pane(getOpponentBoardCanvas(), rocket_Image);
 			setCenter(opponentPane);
 			this.setAlignment(opponentPane, Pos.CENTER);
 		} catch (MalformedURLException e) {
@@ -295,9 +292,10 @@ public class BattleShipView extends BorderPane implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 
+		
 		// PLAYER GRIDCELLS
-		GridCell playerB[][] = theGame.getBattleShipBoard();
-		GraphicsContext gc = playerBoardCanvas.getGraphicsContext2D();
+		playerB = theGame.get_playerB().getGrid();
+		GraphicsContext gc = getPlayerBoardCanvas().getGraphicsContext2D();
 
 		for (int i = 0; i < playerB.length; i++) {
 
@@ -316,12 +314,56 @@ public class BattleShipView extends BorderPane implements Observer {
 				}
 			}
 		}
+		
+		
+		opponentB = theGame.get_opponentB().getGrid();
+		gc = getOpponentBoardCanvas().getGraphicsContext2D();
+
+		for (int i = 0; i < opponentB.length; i++) {
+
+			for (int j = 0; j < opponentB[i].length; j++) {
+				getCellPixels(i, j);
+
+				switch (playerB[i][j].getState()) {
+
+				case HIT:
+					gc.drawImage(hit_Image, rowCell_coordinate, colCell_coordinate, CELL_WIDTH, CELL_HEIGHT);
+					break;
+
+				case MISS:
+					gc.drawImage(miss_Image, rowCell_coordinate, colCell_coordinate, CELL_WIDTH, CELL_HEIGHT);
+					break;
+				}
+			}
+		}
+		
+		
+	}
+
+
+	public Canvas getPlayerBoardCanvas() {
+		return playerBoardCanvas;
+	}
+
+
+	public void setPlayerBoardCanvas(Canvas playerBoardCanvas) {
+		this.playerBoardCanvas = playerBoardCanvas;
+	}
+
+
+	public Canvas getOpponentBoardCanvas() {
+		return opponentBoardCanvas;
+	}
+
+
+	public void setOpponentBoardCanvas(Canvas opponentBoardCanvas) {
+		this.opponentBoardCanvas = opponentBoardCanvas;
 	}
 
 	
 //------------------------------------------------------------------
 	
-	
+	/*
 	
 	private void handlers() {
 		opponentBoardCanvas.setOnMouseClicked(new MouseListener_attacking());
@@ -392,12 +434,12 @@ public class BattleShipView extends BorderPane implements Observer {
 			
 			//facing west
 			if(me.getButton().equals(MouseButton.SECONDARY)){
-				theGame.humanPlayer.addShip(moveRow,moveCol,false,theGame.humanPlayer.lengthOfShip[theGame.humanPlayer.num_shipsAlive]);
+				theGame.getHumanPlayer().addShip(moveRow,moveCol,false,theGame.getHumanPlayer().lengthOfShip[theGame.getHumanPlayer().getNum_shipsAlive()]);
 
 	        }
 			//facing upright
 			else {
-				theGame.humanPlayer.addShip(moveRow,moveCol,true,theGame.humanPlayer.lengthOfShip[theGame.humanPlayer.num_shipsAlive]);
+				theGame.getHumanPlayer().addShip(moveRow,moveCol,true,theGame.getHumanPlayer().lengthOfShip[theGame.getHumanPlayer().getNum_shipsAlive()]);
 			}
 				
 		}	
@@ -478,7 +520,7 @@ public class BattleShipView extends BorderPane implements Observer {
 			}
 			if(selectedCell.getState()==GridCell.CellState.SHIP) {
 				//signal change in gameboardGUI
-				ship[] AIshipArr = theGame.aiPlayer.getShipArr();
+				Ship[] AIshipArr = theGame.getAIPlayer().getShipArr();
 				selectedCell.setState(GridCell.CellState.HIT);
 				theGame.shoot(moveRow, moveCol);
 				
@@ -510,6 +552,6 @@ public class BattleShipView extends BorderPane implements Observer {
 
 	}
 
-	
+*/
 
 }

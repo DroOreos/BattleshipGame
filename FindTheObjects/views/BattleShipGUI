@@ -23,13 +23,15 @@ public class BattleShipGUI extends Application {
 	private MenuItem newGame;
 	private MenuItem randomAI;
 	private MenuItem hardAI;
+	theBattleShipGame theGame;
 	
 	public static void main(String[] args) { launch(args); }
 	
 	//private BattleShipGame theGame;
-	private BorderPane window;
+	private BorderPane window = new BorderPane();
 	public static final int width = 700;
 	public static final int height = 700;
+	public Scene scene= new Scene(window, width, height);
 
 	@Override
 	public void start(Stage stage) {
@@ -41,22 +43,22 @@ public class BattleShipGUI extends Application {
 		randomAI = new MenuItem("Random AI");
 		hardAI = new MenuItem("Hard AI");
 		
-		theBattleShipGame theGame = new theBattleShipGame();
-		BattleShipView battleShipView = new BattleShipView();
-		BattleShipListeners listeners = new BattleShipListeners(scene,battleShipView.playerBoardCanvas,battleShipView.opponentBoardCanvas,theGame);
+		theGame = new theBattleShipGame();
+		BattleShipView battleShipView = new BattleShipView(theGame);
+		BattleShipListeners listeners = new BattleShipListeners(scene,battleShipView.getPlayerBoardCanvas(),battleShipView.getOpponentBoardCanvas(),theGame);
 		listeners.handlers();
 
-		theGame.addObserver(battleShipView);
+		//theGame.addObserver();
 
-       	window = new BorderPane();
+
 		window.setCenter(battleShipView);
+		//optionsMenu.getItems().addAll(new)
 		
 		strategiesMenu.getItems().addAll(randomAI, hardAI);
-		optionsMenu.getItems.addAll(newGame, strategiesMenu);
+		optionsMenu.getItems().addAll(newGame, strategiesMenu);
 		menuBar.getMenus().addAll(optionsMenu);
 		window.setTop(menuBar);
 
-		Scene scene = new Scene(window, width, height);
 		stage.setScene(scene);
 		stage.show();
 		
@@ -65,7 +67,8 @@ public class BattleShipGUI extends Application {
 	private class NewGameHandler implements EventHandler<ActionEvent>{
 		@Override
 		public void handle(ActionEvent event){
-			theGame.initializeBattleShipBoard();
+			//theGame.initializeBattleShipBoard();
+			theGame = new theBattleShipGame();
 		}
 	}
 

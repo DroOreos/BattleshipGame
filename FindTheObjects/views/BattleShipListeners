@@ -1,3 +1,4 @@
+
 import javafx.animation.PathTransition;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -15,7 +16,7 @@ import model.Gameboard;
 import model.GridCell;
 import model.GridCell.CellState;
 import model.Ship;
-import model.humanPlayer;
+import model.HumanPlayer;
 import model.theBattleShipGame;
 
 
@@ -24,7 +25,7 @@ public class BattleShipListeners {
 	private Canvas playerC;
 	private Canvas oppC;
 	private theBattleShipGame game;
-	private humanPlayer human;
+	private HumanPlayer human;
 	private AbstractPlayer AiPlayer;
 	private GridCell[][] player_grid;
 	private GridCell[][] opp_grid;
@@ -48,10 +49,10 @@ public class BattleShipListeners {
 		this.playerC = playerC;
 		this.oppC = opponentC;
 		this.game = game;
-		this.human = (humanPlayer) game.getPlayer1();
-		this.AiPlayer = game.getPlayer2();
-		this.player_grid = this.game.getHumanGrid();
-		this.opp_grid = this.game.getAiGrid();
+		this.human = (HumanPlayer) game.getHumanPlayer();
+		this.AiPlayer = game.getAIPlayer();
+		this.player_grid = this.game.get_playerB().getGrid();
+		this.opp_grid = this.game.get_opponentB().getGrid();
 		
 	}
 	public void handlers() {
@@ -68,7 +69,7 @@ public class BattleShipListeners {
 		public void handle(KeyEvent event) {
 			// TODO Auto-generated method stub
 			if (event.getCode() == KeyCode.DELETE) {
-				human.delete(game.getHumanGameBoard());
+				human.delete(game.get_playerB());
 				//signals to GUI to Delete
 			}
 			
@@ -216,7 +217,7 @@ public class BattleShipListeners {
 			//Getting the cell
 			GridCell selectedCell= player_grid[moveRow][moveCol];
 			if(selectedCell.getState()==GridCell.CellState.EMPTY) {
-				game.shoot(moveRow, moveCol);
+				game.setPAttack(moveRow, moveCol);
 				selectedCell.setState(GridCell.CellState.MISS);
 				
 			}
@@ -224,10 +225,11 @@ public class BattleShipListeners {
 				//signal change in gameboardGUI
 				Ship[] AIshipArr = AiPlayer.getShipArr();
 				selectedCell.setState(GridCell.CellState.HIT);
-				game.shoot(moveRow, moveCol);
+				game.setOAttack(moveRow, moveCol);
+				//game.shoot(moveRow, moveCol);
 				
 			}		
-
+	
 			
 		}
 

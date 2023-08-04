@@ -8,7 +8,7 @@ public abstract class AbstractPlayer {
     protected int hits;
     protected int misses;
     
-    protected int num_shipsAlive;
+    private int num_shipsAlive;
     protected Ship[] ships = new Ship[1];
     
     protected Gameboard game; //place our ships here 
@@ -35,9 +35,9 @@ public abstract class AbstractPlayer {
        // ships[4] = new Battleship();
     	
     	for(int i = 0; i < 1; i++) {
-    		ships[i] = new mockSub(3);
+    		ships[i] = new MockSub(3);
     	}
-        num_shipsAlive = 5;
+        setNum_shipsAlive(5);
     }
 
     /**
@@ -111,8 +111,16 @@ public abstract class AbstractPlayer {
 		
 		
 		ships[getNum_shipsAlive()-1]=null;
-		num_shipsAlive = getNum_shipsAlive() - 1;
+		setNum_shipsAlive(getNum_shipsAlive() - 1);
 		
+	}
+
+	public int getNum_shipsAlive() {
+		return num_shipsAlive;
+	}
+
+	public void setNum_shipsAlive(int num_shipsAlive) {
+		this.num_shipsAlive = num_shipsAlive;
 	}
 
     
