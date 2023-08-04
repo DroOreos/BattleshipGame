@@ -62,8 +62,8 @@ public class HumanPlayer extends AbstractPlayer {
 		Ship curShip = ships[getNum_shipsAlive()-1];
 		boolean curOrientation = curShip.orenation;
 		int length = curShip.length;
-		int x = curShip.getShipArr()[1].getX();
-		int y = curShip.getShipArr()[1].getY();
+		int x = curShip.getShipArr()[0].getX();
+		int y = curShip.getShipArr()[0].getY();
 
 		if (curOrientation) {
 			for(int i =0; i<length;i++) {
