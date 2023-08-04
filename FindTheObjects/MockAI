@@ -30,7 +30,7 @@ public class MockAI extends AbstractPlayer {
                 int col = rand.nextInt(cols);
                 boolean horizontal = rand.nextBoolean();
 
-                validLocation = opponent_board.placeShip(col, row, ship.length, horizontal);
+                validLocation = opponent_game.placeShip(col, row, ship.length, horizontal);
             }
         }
     }
@@ -44,12 +44,12 @@ public class MockAI extends AbstractPlayer {
 
     @Override
     public void makeMoveConsole(int r, int c) {
-        player_board.shoot(r, c);
+        game.shoot(r, c);
     }
 
     @Override
     public int getNumShips() {
-        return super.num_shipsAlive;
+        return super.getNum_shipsAlive();
     }
 
     @Override
@@ -59,8 +59,8 @@ public class MockAI extends AbstractPlayer {
 
 	@Override
 	public void updateAllGameboards(Gameboard o, Gameboard p) {
-		this.opponent_board = o;
-		this.player_board  = p;
+		this.opponent_game = o;
+		this.game  = p;
 	}
 
 }

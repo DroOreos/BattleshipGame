@@ -19,7 +19,7 @@ public class HumanPlayer extends AbstractPlayer {
 		num_shipsSunk = 0;
 
 	}
-
+	
 	public void addShip(int x, int y, boolean orientation,int length) {
 		if(isValid(x,y,length,orientation)) {
 			GridCell[] arrForShip = new GridCell[length];
@@ -33,9 +33,9 @@ public class HumanPlayer extends AbstractPlayer {
 					cell = arrForShip[x+i];
 					
 				}
-				ship newShip = new ship(arrForShip);
-				shipArr[num_shipsAlive]=newShip;
-				num_shipsAlive++;
+				Ship newShip = new Ship(arrForShip);
+				shipArr[getNum_shipsAlive()]=newShip;
+				setNum_shipsAlive(getNum_shipsAlive() + 1);
 			}
 			else {
 				for(int i =0; i<length;i++) {
@@ -47,39 +47,14 @@ public class HumanPlayer extends AbstractPlayer {
 					cell = arrForShip[x+i];
 					
 				}
-				ship newShip = new ship(arrForShip);
-				shipArr[num_shipsAlive]=newShip;
-				num_shipsAlive++;
+				Ship newShip = new Ship(arrForShip);
+				shipArr[getNum_shipsAlive()]=newShip;
+				setNum_shipsAlive(getNum_shipsAlive() + 1);
 				
 			}
 		}	
 	}
-
-	public void delete(Gameboard game) {
-		Ship curShip = shipArr[getNum_shipsAlive()-1];
-		boolean curOrientation = curShip.orenation;
-		int length = curShip.length;
-		int x = curShip.getShipArr()[1].getX();
-		int y = curShip.getShipArr()[1].getY();
-
-		if (curOrientation) {
-			for(int i =0; i<length;i++) {
-				GridCell cell =	game.getGridCell(x+i,y);
-				cell.setState(GridCell.CellState.EMPTY);
-			}
-		}
-		else {
-			for(int i =0; i<length;i++) {
-				GridCell cell =	game.getGridCell(x,y+i);
-				cell.setState(GridCell.CellState.EMPTY);
-			}
-		}
-		
-		
-		shipArr[getNum_shipsAlive()-1]=null;
-		num_shipsAlive = getNum_shipsAlive() - 1;
-		
-	}
+	
 	private boolean isValid(int x, int y,int length,boolean orientation) {
 		// TODO Auto-generated method stub
 		if(orientation) {
@@ -96,45 +71,44 @@ public class HumanPlayer extends AbstractPlayer {
 		return true;
 	}
 
-
-
-
 	/**
 	 * Place the ships for the GUI version.
 	 */
 	@Override
 	public void placeShips(Gameboard game) {
 		this.updateStatusOfBoard(game);
-		
-		
+
 	}
-	
+
 	/**
 	 * Places the ships on the game board by getting valid locations from the user.
-	 * @param playerBoard 
+	 * 
+	 * @param playerBoard
 	 */
 	public void placeShipsConsole(Gameboard playerBoard) {
 		this.updateStatusOfBoard(playerBoard);
+
 		int i = 1;
 		for (Ship ship : ships) {
-            boolean validLocation = false;
-            while (!validLocation) {
-            		
-            	System.out.println("Place Ship# " + i);
+			boolean validLocation = false;
+			while (!validLocation) {
 
-                int row = getValidRowInput();
-                int col = getValidColumnInput();
-                boolean horizontal = getHorizontalInput();
-                
-                //if successfully placed ships, exit the while loop
-                validLocation = game.placeShip(row, col, ship.length, horizontal);
-                
-                if( !validLocation ) {
-                	System.out.println("Invalid Input.");
-                }
+				System.out.println("Place Ship# " + i);
 
-            } i++;
-        }
+				int row = getValidRowInput();
+				int col = getValidColumnInput();
+				boolean horizontal = getHorizontalInput();
+
+				// if successfully placed ships, exit the while loop
+				validLocation = game.placeShip(row, col, ship.length, horizontal);
+
+				if (!validLocation) {
+					System.out.println("Invalid Input.");
+				}
+
+			}
+			i++;
+		}
 	}
 
 	/**
@@ -144,11 +118,9 @@ public class HumanPlayer extends AbstractPlayer {
 	 */
 	@Override
 	public void makeMoveGUI() {
-		//super.updateOpponentBoard(game_status);
 
 	}
 
-	
 	/**
 	 * Makes a move on the game board in the console version of the game.
 	 *
@@ -158,12 +130,11 @@ public class HumanPlayer extends AbstractPlayer {
 	 */
 	@Override
 	public void makeMoveConsole(int r, int c) {
-		//super.updateOpponentBoard(game_status);
 
-		opponent_game.shoot(r,c);
+		opponent_game.shoot(r, c);
 
 	}
-	
+
 	/**
 	 * Gets the number of ships the human player has remaining.
 	 *
@@ -171,7 +142,7 @@ public class HumanPlayer extends AbstractPlayer {
 	 */
 	@Override
 	public int getNumShips() {
-		return super.num_shipsAlive;
+		return super.getNum_shipsAlive();
 	}
 
 	/**
@@ -184,7 +155,6 @@ public class HumanPlayer extends AbstractPlayer {
 		return num_shipsSunk == ships.length;
 	}
 
-	
 	public int getShipsSunked() {
 		return this.num_shipsSunk;
 	}
@@ -194,13 +164,9 @@ public class HumanPlayer extends AbstractPlayer {
 	 *
 	 * @return The number of ships sunk.
 	 */
-	public void setShipsSunked(int s) {
-		this.num_shipsSunk = s;
+	public void setShipsSunked(int sunk) {
+		this.num_shipsSunk = sunk;
 	}
-
-
-
-	
 
 	/**
 	 * Helper function for Place_ships(): get a valid row (A-J)
@@ -286,11 +252,11 @@ public class HumanPlayer extends AbstractPlayer {
 		return placement.toUpperCase().equals("H");
 	}
 
+	
 	@Override
 	public void updateAllGameboards(Gameboard a, Gameboard b) {
-		this.player_board = a;
-		this.opponent_board = b;
+		this.game = a;
+		this.opponent_game = b;
 	}
 
-	
 }
