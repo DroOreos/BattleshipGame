@@ -1,5 +1,4 @@
 
-
 import java.util.Random;
 
 /**
@@ -11,6 +10,7 @@ public class MockAI extends AbstractPlayer {
     private int num_shipsSunk;
     private int rows;
     private int cols;
+    private int[] lengthOfShip = {5,4,3,3,2};
 
     public MockAI(String name, int rows, int cols) {
         super(name);
@@ -23,15 +23,16 @@ public class MockAI extends AbstractPlayer {
     public void placeShips(Gameboard opponentBoard) {
     	this.updateOpponentBoard(opponentBoard);
     	
-        for (Ship ship : ships) {
+        for (int i = 0; i < lengthOfShip.length; i++) {
             boolean validLocation = false;
             while (!validLocation) {
                 int row = rand.nextInt(rows);
                 int col = rand.nextInt(cols);
                 boolean horizontal = rand.nextBoolean();
 
-                validLocation = opponent_game.placeShip(col, row, ship.length, horizontal);
-            }
+                validLocation = opponent_game.placeShip(col, row, lengthOfShip[i], horizontal);
+                
+            }	num_shipsAlive++;
         }
     }
 

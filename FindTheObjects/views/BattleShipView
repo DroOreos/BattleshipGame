@@ -28,6 +28,7 @@ import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -66,6 +67,8 @@ public class BattleShipView extends BorderPane implements Observer {
 	private Image cruiser_v; // 3 spaces
 	private Image submarine_v; // 3 spaces
 	private Image destroyer_v; // 2 spaces
+	
+	Image[] shipImages;
 
 	private static final int BOARD_WIDTH = 500; // 50 pixels per cell * 10 columns
 	private static final int BOARD_HEIGHT = 300; // 30 pixels per cell * 10 rows
@@ -93,6 +96,9 @@ public class BattleShipView extends BorderPane implements Observer {
 	private GridCell[][] playerB;
 	private GridCell[][] opponentB;
 
+	private ArrayList<ArrayList<Integer>> playerShips = new ArrayList<>();
+	// private ArrayList<>
+
 	private theBattleShipGame theGame;
 
 	/**
@@ -112,9 +118,8 @@ public class BattleShipView extends BorderPane implements Observer {
 
 		setUpPlayerShips();
 
-		//handlers();
+		handlers();
 	}
-
 
 	private void initializeBackround() {
 		try {
@@ -158,65 +163,36 @@ public class BattleShipView extends BorderPane implements Observer {
 	}
 
 	private void initializeImages() {
+	    shipImages = new Image[5];
 
-		// FOR TESTING
-		// getCellPixels(0,0);
-		// gc.drawImage(hit_Image, rowCell_coordinate, colCell_coordinate, CELL_WIDTH,
-		// CELL_HEIGHT);
+	    try {
+	        URL hit = new URL("https://image.pngaaa.com/588/355588-middle.png");
+	        hit_Image = new Image(hit.toString());
 
-		try {
+	        URL miss = new URL("https://c4.wallpaperflare.com/wallpaper/965/883/624/manga-one-piece-wallpaper-preview.jpg");
+	        miss_Image = new Image(miss.toString());
 
-			GraphicsContext gc = getPlayerBoardCanvas().getGraphicsContext2D();
-			URL hit = new URL("https://image.pngaaa.com/588/355588-middle.png");
-			hit_Image = new Image(hit.toString());
+	        // ALL SHIP Images Declared Here
+	        URL ship1 = new URL("https://img.favpng.com/4/14/5/ship-aircraft-carrier-united-states-navy-clip-art-png-favpng-YJvtPmWSFN7q50g50bnHU53j2.jpg");
+	        shipImages[0] = new Image(ship1.toString());
 
-			URL miss = new URL(
-					"https://c4.wallpaperflare.com/wallpaper/965/883/624/manga-one-piece-wallpaper-preview.jpg");
-			miss_Image = new Image(miss.toString());
+	        URL ship2 = new URL("https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/3868258/battleship-clipart-md.png");
+	        shipImages[1] = new Image(ship2.toString());
 
-			// ALL SHIP Images Declared Here
-			URL ship1 = new URL(
-					"https://img.favpng.com/4/14/5/ship-aircraft-carrier-united-states-navy-clip-art-png-favpng-YJvtPmWSFN7q50g50bnHU53j2.jpg");
-			aircraft_h = new Image(ship1.toString());
+	        URL ship3 = new URL("https://static.vecteezy.com/system/resources/thumbnails/019/007/990/small/yacht-cruise-ship-png.png");
+	        shipImages[2] = new Image(ship3.toString());
 
-			URL ship2 = new URL(
-					"https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/3868258/battleship-clipart-md.png");
-			battleship_h = new Image(ship2.toString());
+	        URL ship4 = new URL("https://p.turbosquid.com/ts-thumb/iS/z7mXc9/3l/submarine_oceangate_titan/jpg/1637404259/1920x1080/turn_fit_q99/96ecaa6f68c7e9fb1881b7c070c3134479f33dad/submarine_oceangate_titan-1.jpg");
+	        shipImages[3] = new Image(ship4.toString());
 
-			URL ship3 = new URL(
-					"https://static.vecteezy.com/system/resources/thumbnails/019/007/990/small/yacht-cruise-ship-png.png");
-			cruiser_h = new Image(ship3.toString());
+	        URL ship5 = new URL("https://cdn.pixabay.com/photo/2020/08/28/01/58/raft-5523297_1280.png");
+	        shipImages[4] = new Image(ship5.toString());
 
-			URL ship4 = new URL(
-					"https://p.turbosquid.com/ts-thumb/iS/z7mXc9/3l/submarine_oceangate_titan/jpg/1637404259/1920x1080/turn_fit_q99/96ecaa6f68c7e9fb1881b7c070c3134479f33dad/submarine_oceangate_titan-1.jpg");
-			submarine_h = new Image(ship4.toString());
-
-			URL ship5 = new URL("https://cdn.pixabay.com/photo/2020/08/28/01/58/raft-5523297_1280.png");
-			destroyer_h = new Image(ship5.toString());
-
-			ship1 = new URL(
-					"https://img.favpng.com/4/14/5/ship-aircraft-carrier-united-states-navy-clip-art-png-favpng-YJvtPmWSFN7q50g50bnHU53j2.jpg");
-			aircraft_v = new Image(ship1.toString());
-
-			ship2 = new URL(
-					"https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/3868258/battleship-clipart-md.png");
-			battleship_v = new Image(ship2.toString());
-
-			ship3 = new URL(
-					"https://static.vecteezy.com/system/resources/thumbnails/019/007/990/small/yacht-cruise-ship-png.png");
-			cruiser_v = new Image(ship3.toString());
-
-			ship4 = new URL(
-					"https://p.turbosquid.com/ts-thumb/iS/z7mXc9/3l/submarine_oceangate_titan/jpg/1637404259/1920x1080/turn_fit_q99/96ecaa6f68c7e9fb1881b7c070c3134479f33dad/submarine_oceangate_titan-1.jpg");
-			submarine_v = new Image(ship4.toString());
-
-			ship5 = new URL("https://cdn.pixabay.com/photo/2020/08/28/01/58/raft-5523297_1280.png");
-			destroyer_v = new Image(ship5.toString());
-
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
+	    } catch (MalformedURLException e) {
+	        e.printStackTrace();
+	    }
 	}
+
 
 	private void initializeRocket() {
 		try {
@@ -243,6 +219,46 @@ public class BattleShipView extends BorderPane implements Observer {
 
 	private void setUpPlayerShips() {
 
+		GraphicsContext gc = getPlayerBoardCanvas().getGraphicsContext2D();
+
+		// default ships are placed
+		theGame.getHumanPlayer().addShip(0, 0, false, 5);
+		theGame.getHumanPlayer().addShip(1, 0, false, 4);
+		theGame.getHumanPlayer().addShip(2, 0, false, 3);
+		theGame.getHumanPlayer().addShip(3, 0, false, 3);
+		theGame.getHumanPlayer().addShip(4, 0, false, 2);
+		
+
+		// ArrayList = ( x, y, vertical == 1, size,  Image)
+		playerShips.add(new ArrayList<>(Arrays.asList(0, 0, 0, 5, 0))); // Aircraft Carrier
+		playerShips.add(new ArrayList<>(Arrays.asList(1, 0, 0, 4, 1))); // Battleship
+		playerShips.add(new ArrayList<>(Arrays.asList(2, 0, 0, 3, 2))); // Submarine
+		playerShips.add(new ArrayList<>(Arrays.asList(3, 0, 0, 3, 3))); // Cruiser
+		playerShips.add(new ArrayList<>(Arrays.asList(4, 0, 0, 2, 4))); // Destroyer
+
+		
+		
+		for (ArrayList<Integer> ship : playerShips) {
+			int xStart = ship.get(0);
+			int yStart = ship.get(1);
+			
+			int vertical = ship.get(2);
+			int size = ship.get(3);
+			int image = ship.get(4);
+			
+			getCellPixels(xStart, yStart);
+			int width, height;
+
+			if (vertical == 1) { // true
+				width = CELL_WIDTH;
+				height = CELL_HEIGHT * size;
+			} else {
+				width = CELL_WIDTH * size;
+				height = CELL_HEIGHT;
+			}
+
+			gc.drawImage(shipImages[image], rowCell_coordinate, colCell_coordinate, width, height);
+		}
 	}
 
 //-----------------------------HELPER FUNCTIONS--------------------
@@ -273,6 +289,7 @@ public class BattleShipView extends BorderPane implements Observer {
 			}
 		}
 	}
+
 	/**
 	 * Change from 0-9 to the pixels of location
 	 * 
@@ -287,12 +304,10 @@ public class BattleShipView extends BorderPane implements Observer {
 	}
 //-----------------------------------------------------------------
 //--------------------------OBSERVRER( update game)-----------------
-	
 
 	@Override
 	public void update(Observable o, Object arg) {
 
-		
 		// PLAYER GRIDCELLS
 		playerB = theGame.get_playerB().getGrid();
 		GraphicsContext gc = getPlayerBoardCanvas().getGraphicsContext2D();
@@ -314,8 +329,7 @@ public class BattleShipView extends BorderPane implements Observer {
 				}
 			}
 		}
-		
-		
+
 		opponentB = theGame.get_opponentB().getGrid();
 		gc = getOpponentBoardCanvas().getGraphicsContext2D();
 
@@ -336,195 +350,42 @@ public class BattleShipView extends BorderPane implements Observer {
 				}
 			}
 		}
-		
-		
-	}
 
+	}
 
 	public Canvas getPlayerBoardCanvas() {
 		return playerBoardCanvas;
 	}
 
-
 	public void setPlayerBoardCanvas(Canvas playerBoardCanvas) {
 		this.playerBoardCanvas = playerBoardCanvas;
 	}
-
 
 	public Canvas getOpponentBoardCanvas() {
 		return opponentBoardCanvas;
 	}
 
-
 	public void setOpponentBoardCanvas(Canvas opponentBoardCanvas) {
 		this.opponentBoardCanvas = opponentBoardCanvas;
 	}
 
-	
 //------------------------------------------------------------------
-	
-	/*
-	
+
 	private void handlers() {
 		opponentBoardCanvas.setOnMouseClicked(new MouseListener_attacking());
 
 		// opponentBoardCanvas.setOnMouseClicked(new MouseListener());
-		playerBoardCanvas.setOnMouseClicked(new MouseListner_placeShips());
+		// playerBoardCanvas.setOnMouseClicked(new MouseListner_placeShips());
 	}
-	private class MouseListner_placeShips implements EventHandler<MouseEvent>{
-
-		@Override
-		public void handle(MouseEvent me) {
-			// TODO Auto-generated method stub
-			double row = me.getY();
-			double col =me.getX();
-			System.out.println("("+row+", "+col + ") ");
-				
-				
-			int moveRow = -1;
-			int moveCol = -1;
-						
-
-			//determine selected ROW and COL for 
-
-			//determine selected ROW
-			if(row>=canvasBOTTOM && row<=CELL_WIDTH) 
-				moveRow = 0;
-			if(row>=CELL_WIDTH && row<=(CELL_WIDTH*2)) 
-				moveRow = 1;
-			if(row>=(CELL_WIDTH*2) && row<=(CELL_WIDTH*3)) 
-				moveRow = 2;
-			if(row>=(CELL_WIDTH*3) && row<=(CELL_WIDTH*4)) 
-				moveRow = 3;
-			if(row>=(CELL_WIDTH*4) && row<=(CELL_WIDTH*5)) 
-				moveRow = 4;
-			if(row>=(CELL_WIDTH*5) && row<=(CELL_WIDTH*6)) 
-				moveRow = 5;
-			if(row>=(CELL_WIDTH*6) && row<=(CELL_WIDTH*7)) 
-				moveRow = 6;
-			if(row>=(CELL_WIDTH*7) && row<=(CELL_WIDTH*8)) 
-				moveRow = 7;
-			if(row>=(CELL_WIDTH*8) && row<=(CELL_WIDTH*9)) 
-				moveRow = 8;
-			if(row>=(CELL_WIDTH*9) && row<=(CELL_WIDTH*10)) 
-				moveRow = 9;
-			
-			//determine selected COL
-			if(col>=canvasBOTTOM && col<CELL_HEIGHT) 
-				moveCol = 0;
-			if(col>=CELL_HEIGHT && col<=(CELL_HEIGHT*2)) 
-				moveCol = 1;
-			if(col>=(CELL_HEIGHT*2) && col<=(CELL_HEIGHT*3)) 
-				moveCol = 2;
-			if(col>=(CELL_HEIGHT*3) && col<=(CELL_HEIGHT*4)) 
-				moveCol = 3;
-			if(col>=(CELL_HEIGHT*4) && col<=(CELL_HEIGHT*5)) 
-				moveCol = 4;
-			if(col>=(CELL_HEIGHT*5) && col<=(CELL_HEIGHT*6)) 
-				moveCol = 5;
-			if(col>=(CELL_HEIGHT*6) && col<=(CELL_HEIGHT*7)) 
-				moveCol = 6;
-			if(col>=(CELL_HEIGHT*7) && col<=(CELL_HEIGHT*8)) 
-				moveCol = 7;
-			if(col>=(CELL_HEIGHT*8) && col<=(CELL_HEIGHT*9)) 
-				moveCol = 8;
-			if(col>=(CELL_HEIGHT*9) && col<=(CELL_HEIGHT*10)) 
-				moveCol = 9;
-			
-			
-			//facing west
-			if(me.getButton().equals(MouseButton.SECONDARY)){
-				theGame.getHumanPlayer().addShip(moveRow,moveCol,false,theGame.getHumanPlayer().lengthOfShip[theGame.getHumanPlayer().getNum_shipsAlive()]);
-
-	        }
-			//facing upright
-			else {
-				theGame.getHumanPlayer().addShip(moveRow,moveCol,true,theGame.getHumanPlayer().lengthOfShip[theGame.getHumanPlayer().getNum_shipsAlive()]);
-			}
-				
-		}	
-		 
-		
-	}
-
 
 	private class MouseListener_attacking implements EventHandler<MouseEvent> {
 
 		@Override
 		public void handle(MouseEvent me) {
 			// Get the pixel where the canvas was just clicked
-			// TODO Auto-generated method stub
 			double row = me.getY();
-			double col =me.getX();
-			System.out.println("("+row+", "+col + ") ");
-			
-			
-			int moveRow = -1;
-			int moveCol = -1;
-
-			
-			//determine selected ROW and COL for 
-
-			//determine selected ROW
-			if(row>=canvasTOP && row<=CELL_WIDTH) 
-				moveRow = 0;
-			if(row>=CELL_WIDTH && row<=(CELL_WIDTH*2)) 
-				moveRow = 1;
-			if(row>=(CELL_WIDTH*2) && row<=(CELL_WIDTH*3)) 
-				moveRow = 2;
-			if(row>=(CELL_WIDTH*3) && row<=(CELL_WIDTH*4)) 
-				moveRow = 3;
-			if(row>=(CELL_WIDTH*4) && row<=(CELL_WIDTH*5)) 
-				moveRow = 4;
-			if(row>=(CELL_WIDTH*5) && row<=(CELL_WIDTH*6)) 
-				moveRow = 5;
-			if(row>=(CELL_WIDTH*6) && row<=(CELL_WIDTH*7)) 
-				moveRow = 6;
-			if(row>=(CELL_WIDTH*7) && row<=(CELL_WIDTH*8)) 
-				moveRow = 7;
-			if(row>=(CELL_WIDTH*8) && row<=(CELL_WIDTH*9)) 
-				moveRow = 8;
-			if(row>=(CELL_WIDTH*9) && row<=(CELL_WIDTH*10)) 
-				moveRow = 9;
-			
-			//determine selected COL
-			if(col>=canvasTOP && col<CELL_HEIGHT) 
-				moveCol = 0;
-			if(col>=CELL_HEIGHT && col<=(CELL_HEIGHT*2)) 
-				moveCol = 1;
-			if(col>=(CELL_HEIGHT*2) && col<=(CELL_HEIGHT*3)) 
-				moveCol = 2;
-			if(col>=(CELL_HEIGHT*3) && col<=(CELL_HEIGHT*4)) 
-				moveCol = 3;
-			if(col>=(CELL_HEIGHT*4) && col<=(CELL_HEIGHT*5)) 
-				moveCol = 4;
-			if(col>=(CELL_HEIGHT*5) && col<=(CELL_HEIGHT*6)) 
-				moveCol = 5;
-			if(col>=(CELL_HEIGHT*6) && col<=(CELL_HEIGHT*7)) 
-				moveCol = 6;
-			if(col>=(CELL_HEIGHT*7) && col<=(CELL_HEIGHT*8)) 
-				moveCol = 7;
-			if(col>=(CELL_HEIGHT*8) && col<=(CELL_HEIGHT*9)) 
-				moveCol = 8;
-			if(col>=(CELL_HEIGHT*9) && col<=(CELL_HEIGHT*10)) 
-				moveCol = 9;
-		
-			
-			//Getting the cell
-			GridCell selectedCell= player_grid[moveRow][moveCol];
-			if(selectedCell.getState()==GridCell.CellState.EMPTY) {
-				//signal change in gameboardGUI
-				theGame.shoot(moveRow, moveCol);
-				selectedCell.setState(GridCell.CellState.MISS);
-				
-			}
-			if(selectedCell.getState()==GridCell.CellState.SHIP) {
-				//signal change in gameboardGUI
-				Ship[] AIshipArr = theGame.getAIPlayer().getShipArr();
-				selectedCell.setState(GridCell.CellState.HIT);
-				theGame.shoot(moveRow, moveCol);
-				
-			}		
+			double col = me.getX();
+			System.out.println("(" + row + ", " + col + ") ");
 
 			animateRocket(col, row);
 		}
@@ -551,7 +412,5 @@ public class BattleShipView extends BorderPane implements Observer {
 		}
 
 	}
-
-*/
 
 }
