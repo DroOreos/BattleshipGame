@@ -34,7 +34,7 @@ public class HumanPlayer extends AbstractPlayer {
 					
 				}
 				Ship newShip = new Ship(arrForShip);
-				shipArr[getNum_shipsAlive()]=newShip;
+				ships[getNum_shipsAlive()]=newShip;
 				setNum_shipsAlive(getNum_shipsAlive() + 1);
 			}
 			else {
@@ -48,7 +48,7 @@ public class HumanPlayer extends AbstractPlayer {
 					
 				}
 				Ship newShip = new Ship(arrForShip);
-				shipArr[getNum_shipsAlive()]=newShip;
+				ships[getNum_shipsAlive()]=newShip;
 				setNum_shipsAlive(getNum_shipsAlive() + 1);
 				
 			}
