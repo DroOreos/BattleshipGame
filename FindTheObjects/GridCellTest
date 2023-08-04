@@ -1,0 +1,73 @@
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class GridCellTest {
+
+    private GridCell gridCell;
+
+    @Before
+    public void setUp() {
+        // Create a new GridCell instance before each test
+        gridCell = new GridCell(3, 5);
+    }
+
+    @Test
+    public void testGetX() {
+        // Test the getX() method
+        assertEquals(3, gridCell.getX());
+    }
+
+    @Test
+    public void testGetY() {
+        // Test the getY() method
+        assertEquals(5, gridCell.getY());
+    }
+
+    @Test
+    public void testGetState() {
+        // Test the getState() method
+        assertEquals(GridCell.CellState.EMPTY, gridCell.getState());
+    }
+
+    @Test
+    public void testSetState() {
+        // Test the setState() method
+        gridCell.setState(GridCell.CellState.HIT);
+        assertEquals(GridCell.CellState.HIT, gridCell.getState());
+
+        gridCell.setState(GridCell.CellState.SHIP);
+        assertEquals(GridCell.CellState.SHIP, gridCell.getState());
+
+        gridCell.setState(GridCell.CellState.MISS);
+        assertEquals(GridCell.CellState.MISS, gridCell.getState());
+    }
+
+    @Test
+    public void testSetStateWithEmpty() {
+        // Test setting the state to EMPTY
+        gridCell.setState(GridCell.CellState.HIT);
+        gridCell.setState(GridCell.CellState.EMPTY);
+        assertEquals(GridCell.CellState.EMPTY, gridCell.getState());
+    }
+
+    @Test
+    public void testSetStateWithNull() {
+        // Test setting the state to null
+        gridCell.setState(GridCell.CellState.HIT);
+        gridCell.setState(null);
+        assertEquals(GridCell.CellState.HIT, gridCell.getState());
+    }
+
+    @Test
+    public void testSetStateMultipleTimes() {
+        // Test setting the state multiple times
+        gridCell.setState(GridCell.CellState.HIT);
+        gridCell.setState(GridCell.CellState.MISS);
+        gridCell.setState(GridCell.CellState.SHIP);
+        gridCell.setState(GridCell.CellState.EMPTY);
+        assertEquals(GridCell.CellState.EMPTY, gridCell.getState());
+    }
+}
+
