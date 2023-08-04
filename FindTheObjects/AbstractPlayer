@@ -28,16 +28,8 @@ public abstract class AbstractPlayer {
      * initialize one of each ship
      */
     private void initializeShips() {
-       // ships[0] = new AircraftCarrier();
-       // ships[1] = new Submarine();
-       // ships[2] = new Cruiser();
-       // ships[3] = new Destroyer();
-       // ships[4] = new Battleship();
     	
-    	for(int i = 0; i < 1; i++) {
-    		ships[i] = new MockSub(3);
-    	}
-        setNum_shipsAlive(5);
+        setNum_shipsAlive(0);
     }
 
     /**
