@@ -1,3 +1,5 @@
+package views;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -49,7 +51,8 @@ public class BattleShipView extends BorderPane implements Observer {
 	private ArrayList<Ship> opponent_ships;
 
 	// keep track of the ship being dragged.
-	private Ship selectedShip = null;
+	private ImageView selectedShip = null;
+	private double offsetX, offsetY;
 
 	// ALL Battleships Horizontal
 	private Image aircraft_h; // 5 spaces
@@ -83,6 +86,7 @@ public class BattleShipView extends BorderPane implements Observer {
 	private int colCell_coordinate;
 
 	Pane opponentPane;
+	private Pane playerBoardPane = new Pane();
 
 	private static final double rocketX = 0;
 	private static final double rocketY = 500;
@@ -111,8 +115,6 @@ public class BattleShipView extends BorderPane implements Observer {
 		initializeAllPanel();
 
 		initializeImages();
-		
-		initializeImageView();
 
 		initializeRocket();
 
@@ -121,13 +123,12 @@ public class BattleShipView extends BorderPane implements Observer {
 		handlers();
 	}
 
-
+	/**
+	 * Set up the background Image
+	 */
 	private void initializeBackround() {
 		try {
-
 			// Load the background image
-			// URL backgroundImageUrl = new
-			// URL("https://imagedelivery.net/9sCnq8t6WEGNay0RAQNdvQ/UUID-cl90h85qq3675379tqywsvb6z1w/public");
 			URL backgroundImageUrl = new URL(
 					"https://c4.wallpaperflare.com/wallpaper/965/883/624/manga-one-piece-wallpaper-preview.jpg");
 			Image backgroundImage = new Image(backgroundImageUrl.toString());
@@ -141,6 +142,9 @@ public class BattleShipView extends BorderPane implements Observer {
 		}
 	}
 
+	/**
+	 * Set up and display the gameboards to the gui.
+	 */
 	private void initializeAllPanel() {
 		this.setTop(getOpponentBoardCanvas());
 		this.setBottom(getPlayerBoardCanvas());
@@ -158,11 +162,13 @@ public class BattleShipView extends BorderPane implements Observer {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-
-		drawB(getOpponentBoardCanvas());
+		drawB(getOpponentBoardCanvas()); // draw the boards here
 		drawB(getPlayerBoardCanvas());
 	}
 
+	/**
+	 * Load all imagess from URL and store them in the class.
+	 */
 	private void initializeImages() {
 		shipImages = new Image[5];
 
@@ -200,13 +206,9 @@ public class BattleShipView extends BorderPane implements Observer {
 		}
 	}
 
-	private void initializeImageView() {
-	    for (int i = 0; i < shipImages.length; i++) {
-	        ImageView shipImageView = new ImageView(shipImages[i]);
-
-	    }
-	}
-	
+	/**
+	 * Load up the rocket image and place it on the grid.
+	 */
 	private void initializeRocket() {
 		try {
 			// Load the rocket image from the URL
@@ -223,15 +225,17 @@ public class BattleShipView extends BorderPane implements Observer {
 			rocket_Image.setFitHeight(CELL_HEIGHT);
 
 			opponentPane = new Pane(getOpponentBoardCanvas(), rocket_Image);
-			setCenter(opponentPane);
-			this.setAlignment(opponentPane, Pos.CENTER);
+			this.setCenter(opponentPane);
+			this.setAlignment(opponentPane, Pos.TOP_CENTER);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Place the ships on the board with a default placement.
+	 */
 	private void setUpPlayerShips() {
-
 		theGame.placeAIShips();
 		theGame.printAIBoard(theGame.get_opponentB());
 
@@ -251,18 +255,42 @@ public class BattleShipView extends BorderPane implements Observer {
 		playerShips.add(new ArrayList<>(Arrays.asList(3, 0, 0, 3, 3))); // Cruiser
 		playerShips.add(new ArrayList<>(Arrays.asList(4, 0, 0, 2, 4))); // Destroyer
 
+		placeShips();
+
+		/*
+		 * for (ArrayList<Integer> ship : playerShips) { int xStart = ship.get(0); int
+		 * yStart = ship.get(1);
+		 * 
+		 * int vertical = ship.get(2); int size = ship.get(3); int image = ship.get(4);
+		 * 
+		 * getCellPixels(xStart, yStart); int width, height;
+		 * 
+		 * if (vertical == 1) { // true width = CELL_WIDTH; height = CELL_HEIGHT * size;
+		 * } else { width = CELL_WIDTH * size; height = CELL_HEIGHT; }
+		 * 
+		 * gc.drawImage(shipImages[image], rowCell_coordinate, colCell_coordinate,
+		 * width, height); }
+		 */
+	}
+
+	private void placeShips() {
+		// theGame.placeAIShips();
+		// theGame.printAIBoard(theGame.get_opponentB());
+
+		GraphicsContext gc = getPlayerBoardCanvas().getGraphicsContext2D();
+
 		for (ArrayList<Integer> ship : playerShips) {
 			int xStart = ship.get(0);
 			int yStart = ship.get(1);
-
 			int vertical = ship.get(2);
 			int size = ship.get(3);
-			int image = ship.get(4);
+			int imageIndex = ship.get(4);
 
 			getCellPixels(xStart, yStart);
+
 			int width, height;
 
-			if (vertical == 1) { // true
+			if (vertical == 1) {
 				width = CELL_WIDTH;
 				height = CELL_HEIGHT * size;
 			} else {
@@ -270,11 +298,26 @@ public class BattleShipView extends BorderPane implements Observer {
 				height = CELL_HEIGHT;
 			}
 
-			gc.drawImage(shipImages[image], rowCell_coordinate, colCell_coordinate, width, height);
+			gc.drawImage(shipImages[imageIndex], rowCell_coordinate, colCell_coordinate, width, height);
+
+			addDragHandlers(xStart,yStart, width, height, imageIndex, gc);
 		}
 	}
 
+	private void addDragHandlers(int xStart, int yStart, int width, int height, int imageIndex, GraphicsContext gc) {
+		ShipDragHandler dragHandler = new ShipDragHandler(playerBoardCanvas, shipImages);
+		System.out.println("handlers");
+		playerBoardCanvas.setOnMousePressed(dragHandler);
+		playerBoardCanvas.setOnMouseDragged(dragHandler);
+		playerBoardCanvas.setOnMouseReleased(dragHandler);
+	}
+
 //-----------------------------HELPER FUNCTIONS--------------------
+	/**
+	 * Helper Function: draw the grid lines on the gameboard.
+	 * 
+	 * @param board - reference to the board. (human or ai board)
+	 */
 	private void drawB(Canvas board) {
 		GraphicsContext gc = board.getGraphicsContext2D();
 
@@ -288,9 +331,14 @@ public class BattleShipView extends BorderPane implements Observer {
 			double x = col * CELL_WIDTH;
 			gc.strokeLine(x, 0, x, BOARD_HEIGHT);
 		}
-
 	}
 
+	/**
+	 * Helper Function: Set up every cell with a water image.
+	 * 
+	 * @param board - reference to the gameboard.
+	 * @throws MalformedURLException
+	 */
 	private void setCells(Canvas board) throws MalformedURLException {
 		GraphicsContext gc = board.getGraphicsContext2D();
 
@@ -304,10 +352,11 @@ public class BattleShipView extends BorderPane implements Observer {
 	}
 
 	/**
-	 * Change from 0-9 to the pixels of location
+	 * Convert the location (0-9) into the cell pixels to place in the correct cell
+	 * location.
 	 * 
-	 * @param row
-	 * @param col
+	 * @param row: 0 - 9
+	 * @param col: 0 - 9
 	 */
 	private void getCellPixels(int row, int col) {
 
@@ -318,6 +367,9 @@ public class BattleShipView extends BorderPane implements Observer {
 //-----------------------------------------------------------------
 //--------------------------OBSERVRER( update game)-----------------
 
+	/**
+	 * Update the GUI
+	 */
 	@Override
 	public void update(Object theObserved) {
 		// TODO Auto-generated method stub
@@ -333,6 +385,13 @@ public class BattleShipView extends BorderPane implements Observer {
 		updateBoard(opponentB, gc);
 	}
 
+	/**
+	 * Helper Function: loop through both grids to update the gui with the proper
+	 * images.
+	 * 
+	 * @param board - reference to the gamebord
+	 * @param gc    - Graphic Contents
+	 */
 	private void updateBoard(GridCell[][] board, GraphicsContext gc) {
 		for (int i = 0; i < board.length; i++) {
 			for (int j = 0; j < board[i].length; j++) {
@@ -356,52 +415,83 @@ public class BattleShipView extends BorderPane implements Observer {
 
 	// ------------------------------------------------------------------
 
+	/**
+	 * Getter();
+	 * 
+	 * @return - Gameboard of the player
+	 */
 	public Canvas getPlayerBoardCanvas() {
 		return playerBoardCanvas;
 	}
 
+	/**
+	 * Setter()
+	 * 
+	 * @param playerBoardCanvas
+	 */
 	public void setPlayerBoardCanvas(Canvas playerBoardCanvas) {
 		this.playerBoardCanvas = playerBoardCanvas;
 	}
 
+	/**
+	 * Getter()
+	 * 
+	 * @return - Gameboard of the AI.
+	 */
 	public Canvas getOpponentBoardCanvas() {
 		return opponentBoardCanvas;
 	}
 
+	/**
+	 * Setter();
+	 * 
+	 * @param opponentBoardCanvas
+	 */
 	public void setOpponentBoardCanvas(Canvas opponentBoardCanvas) {
 		this.opponentBoardCanvas = opponentBoardCanvas;
 	}
 
+	/**
+	 * Handlers
+	 */
 	public void handlers() {
 		opponentBoardCanvas.setOnMouseClicked(new MouseListener_X());
 
-		// dragging and dropping
-     //   shipImageView.setOnMousePressed(new ShipDragHandler());
-     //   shipImageView.setOnMouseDragged(new ShipDragHandler());
-     //   shipImageView.setOnMouseReleased(new ShipDragHandler());
 	}
 
+	/**
+	 * When the user clicks a cell in the opponent board( attacking ), we will send
+	 * the attack to the ai board. and create an animation that simmulated an
+	 * 'attack'
+	 */
 	private class MouseListener_X implements EventHandler<MouseEvent> {
 
+		/**
+		 * Get the location of where the user clicks, and check if it is a valid
+		 * placement before attacking.
+		 */
 		@Override
 		public void handle(MouseEvent me) {
 			// Get the pixel where the canvas was just clicked
 			double row = me.getY();
 			double col = me.getX();
-		//	System.out.println("(we in here" + row + ", " + col + ") ");
 
 			int r = (int) (row / CELL_HEIGHT);
 			int c = (int) (col / CELL_WIDTH);
-		//	System.out.println("attacking at: (" + r + "," + c + ") ");
 
 			boolean successfull = theGame.setPAttack(r, c);
 			if (successfull) {
 				theGame.setOAttack(r, c);
 				animateRocket(col, row);
-
 			}
 		}
 
+		/**
+		 * PathTransition Animation.
+		 * 
+		 * @param targetX - (row) location to send the animation to.
+		 * @param targetY - (col) location to send the animation to.
+		 */
 		private void animateRocket(double targetX, double targetY) {
 
 			double grid_row = opponentBoardCanvas.localToScene(targetX, targetY).getX();
@@ -425,12 +515,65 @@ public class BattleShipView extends BorderPane implements Observer {
 
 	}
 
-	private class ShipDragHandler implements EventHandler<MouseEvent> {
+	public class ShipDragHandler implements EventHandler<MouseEvent> {
+		private final Canvas playerBoardCanvas;
+		private final Image[] shipImages;
+		private double offsetX, offsetY;
+		private ImageView selectedShip;
+
+		public ShipDragHandler(Canvas playerBoardCanvas, Image[] shipImages) {
+			this.playerBoardCanvas = playerBoardCanvas;
+			this.shipImages = shipImages;
+		}
 
 		@Override
-		public void handle(MouseEvent arg0) {
+		public void handle(MouseEvent event) {
+		//	System.out.println("handler activated");
+			double mouseX = event.getX();
+			double mouseY = event.getY();
 			
+			System.out.println("("+mouseX + "," + mouseY);
+			
+			if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
+				for (ArrayList<Integer> ship : playerShips) {
+					int xStart = ship.get(0);
+					int yStart = ship.get(1);
+					int vertical = ship.get(2);
+					int size = ship.get(3);
+					int imageIndex = ship.get(4);
+
+					double startX = xStart * CELL_WIDTH;
+					double startY = yStart * CELL_HEIGHT;
+					int width, height;
+
+					if (vertical == 1) {
+						width = CELL_WIDTH;
+						height = CELL_HEIGHT * size;
+					} else {
+						width = CELL_WIDTH * size;
+						height = CELL_HEIGHT;
+					}
+				
+				}
+			} else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+				if (selectedShip != null) {
+					double newX = event.getX() - offsetX;
+					double newY = event.getY() - offsetY;
+
+					selectedShip.relocate(newX, newY);
+				}
+			} else if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
+				if (selectedShip != null) {
+					int newRow = (int) (event.getY() / CELL_HEIGHT);
+					int newCol = (int) (event.getX() / CELL_WIDTH);
+
+					playerBoardCanvas.getGraphicsContext2D().clearRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
+					setUpPlayerShips();
+
+					selectedShip = null;
+				}
+			}
 		}
-		
 	}
+
 }

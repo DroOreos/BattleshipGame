@@ -1,102 +1,116 @@
-
-
 import java.util.Scanner;
 
 /**
- * Represents a human player in the Battleship game.
+ * This class represents a human player in the battleShip Game.
+ * 
+ * @author Pedro
  */
 public class HumanPlayer extends AbstractPlayer {
 
 	private Scanner input = new Scanner(System.in);
 	private int num_shipsSunk;
-	public int[] lengthOfShip = {5,4,3,3,2};
+	public int[] lengthOfShip = { 5, 4, 3, 3, 2 };
 
 	/**
 	 * Constructor
+	 * 
+	 * @param name of the human player
 	 */
 	public HumanPlayer(String name) {
 		super(name);
 		num_shipsSunk = 0;
+	}
 
-	}
-	
-	public void addShip(int x, int y, boolean orientation,int length) {
-		if(isValid(x,y,length,orientation)) {
+	/**
+	 * Method to place ships to onto the players(human) gameboard
+	 * 
+	 * @param x           - starting row coordinate
+	 * @param y           - starting column coordinate
+	 * @param orientation - horizontal or vertival
+	 * @param length      - size of the ship being placed
+	 */
+	public void addShip(int x, int y, boolean orientation, int length) {
+		if (isValid(x, y, length, orientation)) {
 			GridCell[] arrForShip = new GridCell[length];
-			if(orientation) {
-				for(int i =0; i<length;i++) {
-					GridCell cell =	game.getGridCell(x+i,y);
-					if(cell.getState()==GridCell.CellState.SHIP) 
+			if (orientation) {
+				for (int i = 0; i < length; i++) {
+					GridCell cell = game.getGridCell(x + i, y);
+					if (cell.getState() == GridCell.CellState.SHIP)
 						break;
-	
+
 					cell.setState(GridCell.CellState.SHIP);
 					arrForShip[i] = cell;
-					
+
 				}
-				if(arrForShip[length-1]!=null) {
+				if (arrForShip[length - 1] != null) {
 					Ship newShip = new Ship(arrForShip);
-					ships[num_shipsAlive]=newShip;
+					ships[num_shipsAlive] = newShip;
+					num_shipsAlive++;
+				}
+			} else {
+				for (int i = 0; i < length; i++) {
+					GridCell cell = game.getGridCell(x, y + i);
+					if (cell.getState() == GridCell.CellState.SHIP)
+						break;
+
+					cell.setState(GridCell.CellState.SHIP);
+					arrForShip[i] = cell;
+
+				}
+				if (arrForShip[length - 1] != null) {
+					Ship newShip = new Ship(arrForShip);
+					ships[num_shipsAlive] = newShip;
 					num_shipsAlive++;
 				}
 			}
-			else {
-				for(int i =0; i<length;i++) {
-					GridCell cell =	game.getGridCell(x,y+i);
-					if(cell.getState()==GridCell.CellState.SHIP) 
-						break;
-					
-					cell.setState(GridCell.CellState.SHIP);
-					arrForShip[i] = cell;
-					
-				}
-				if(arrForShip[length-1]!=null) {
-					Ship newShip = new Ship(arrForShip);
-					ships[num_shipsAlive]=newShip;
-					num_shipsAlive++;
-				}
-				
-			}
-		}	
+		}
 	}
+
+	/**
+	 * Removes a current Ship on the board.
+	 * 
+	 * @param game - reference to the game.
+	 */
 	public void delete(Gameboard game) {
-		Ship curShip = ships[getNum_shipsAlive()-1];
+		Ship curShip = ships[getNum_shipsAlive() - 1];
 		boolean curOrientation = curShip.orenation;
 		int length = curShip.length;
 		int x = curShip.getShipArr()[0].getX();
 		int y = curShip.getShipArr()[0].getY();
 
 		if (curOrientation) {
-			for(int i =0; i<length;i++) {
-				GridCell cell =	game.getGridCell(x+i,y);
+			for (int i = 0; i < length; i++) {
+				GridCell cell = game.getGridCell(x + i, y);
+				cell.setState(GridCell.CellState.EMPTY);
+			}
+		} else {
+			for (int i = 0; i < length; i++) {
+				GridCell cell = game.getGridCell(x, y + i);
 				cell.setState(GridCell.CellState.EMPTY);
 			}
 		}
-		else {
-			for(int i =0; i<length;i++) {
-				GridCell cell =	game.getGridCell(x,y+i);
-				cell.setState(GridCell.CellState.EMPTY);
-			}
-		}
-		
-		
-		ships[getNum_shipsAlive()-1]=null;
+		ships[getNum_shipsAlive() - 1] = null;
 		setNum_shipsAlive(getNum_shipsAlive() - 1);
-		
+
 	}
-	
-	private boolean isValid(int x, int y,int length,boolean orientation) {
-		// TODO Auto-generated method stub
-		if(orientation) {
-			if(x+length>=10)
+
+	/**
+	 * Helper function: checks if the
+	 * 
+	 * @param x           - row location
+	 * @param y           - col location
+	 * @param length      - size ship
+	 * @param orientation - horizontal(T); veritical(F)
+	 * @return t==valid; f==invalid
+	 */
+	private boolean isValid(int x, int y, int length, boolean orientation) {
+		if (orientation) {
+			if (x + length >= 10)
 				return false;
-							
-		}
-					
-		else {
-			if (y+length>=10)
+		} else {
+			if (y + length >= 10)
 				return false;
 		}
-		
 		return true;
 	}
 
@@ -105,8 +119,8 @@ public class HumanPlayer extends AbstractPlayer {
 	 */
 	@Override
 	public void placeShips(Gameboard game) {
+	
 		this.updateStatusOfBoard(game);
-
 	}
 
 	/**
@@ -159,9 +173,7 @@ public class HumanPlayer extends AbstractPlayer {
 	 */
 	@Override
 	public void makeMoveConsole(int r, int c) {
-
 		opponent_game.shoot(r, c);
-
 	}
 
 	/**
@@ -257,7 +269,7 @@ public class HumanPlayer extends AbstractPlayer {
 	 * Helper function for placeShips(): get a valid boolean that tells us if it is
 	 * horizontal.
 	 * 
-	 * @return boolean
+	 * @return boolean: T = horizontal; F = vertical
 	 */
 	private boolean getHorizontalInput() {
 		boolean validInput = false;
@@ -281,7 +293,9 @@ public class HumanPlayer extends AbstractPlayer {
 		return placement.toUpperCase().equals("H");
 	}
 
-	
+	/**
+	 * Updates the status of both player and AI gameboard.
+	 */
 	@Override
 	public void updateAllGameboards(Gameboard a, Gameboard b) {
 		this.game = a;

@@ -1,95 +1,133 @@
 
 /**
- * An abstract class representing a player in the Battleship game.
+ * An Abstract class to represent a player object
+ * 
+ * @author Pedro
+ *
  */
 public abstract class AbstractPlayer {
 
-    protected String name;
-    protected int hits;
-    protected int misses;
-    
-    private int num_shipsAlive;
-    protected Ship[] ships = new Ship[5];
-    
-    protected Gameboard game; //place our ships here 
-    protected Gameboard opponent_game; // send out attacks here
+	protected String name;
+	protected int hits;
+	protected int misses;
 
-    public AbstractPlayer(String name) {
-        this.name = name;
-        
-        this.hits = 0;
-        this.misses = 0;
-        initializeShips();
-    }
-    
-    public abstract void updateAllGameboards(Gameboard p, Gameboard o);
+	protected int num_shipsAlive;
+	protected Ship[] ships = new Ship[5];
 
-    /**
-     * initialize one of each ship
-     */
-    private void initializeShips() {
-    	
-        setNum_shipsAlive(0);
-    }
+	protected Gameboard game; // place our ships here
+	protected Gameboard opponent_game; // send out attacks here
 
-    /**
-     * Place ships randomly once you create an AI_player object. or humanPlayer manually places ships 
-     */
-    public abstract void placeShips(Gameboard g);
+	/**
+	 * Constructor
+	 * 
+	 * @param name of the player
+	 */
+	public AbstractPlayer(String name) {
+		this.name = name;
+		this.hits = 0;
+		this.misses = 0;
+		initializeShips();
+	}
 
-    /**
-     * Makes a move on the game board in the GUI version of the game.
-     *
-     * @param game The current game board status.
-     */
-    public abstract void makeMoveGUI();
+	/**
+	 * updates the gameboards status.
+	 * 
+	 * @param player board
+	 * @param o      - ai board
+	 */
+	public abstract void updateAllGameboards(Gameboard p, Gameboard o);
 
-    /**
-     * player move on console
-     */
-    public abstract void makeMoveConsole(int r, int c);
+	/**
+	 * initialize one of each ship
+	 */
+	private void initializeShips() {
+		setNum_shipsAlive(0);
+	}
 
+	/**
+	 * Place ships randomly once you create an AI_player object. or humanPlayer
+	 * manually places ships
+	 */
+	public abstract void placeShips(Gameboard g);
 
-    /**
-     * Gets the number of ships owned by the player.
-     *
-     * @return The number of ships remaining.
-     */
-    protected abstract int getNumShips();
-    
-    /**
-     * Updates the game board status for the player.
-     *
-     * @param game The current game board status.
-     */
-    protected void updateStatusOfBoard(Gameboard game) {
-    	this.game = game;
-    }
-    public abstract boolean hasWon(); 
-    
-    /**
-     * Updates the game board status for the opponent of the player. (mainly for attacks)
-     *
-     * @param game The current game board status.
-     */
-    protected void updateOpponentBoard(Gameboard game) {
-    	this.opponent_game = game;
-    }
-    public String getName() {
-    	return this.name;
-    }
-    public Ship[] getShipArr(){
-        return this.ships;
-    }
-    
+	/**
+	 * Makes a move on the game board in the GUI version of the game.
+	 *
+	 * @param game The current game board status.
+	 */
+	public abstract void makeMoveGUI();
 
+	/**
+	 * player move on console
+	 */
+	public abstract void makeMoveConsole(int r, int c);
+
+	/**
+	 * Gets the number of ships owned by the player.
+	 *
+	 * @return The number of ships remaining.
+	 */
+	public abstract int getNumShips();
+
+	/**
+	 * Updates the game board status for the player.
+	 *
+	 * @param game The current game board status.
+	 */
+	public void updateStatusOfBoard(Gameboard game) {
+		this.game = game;
+	}
+
+	/**
+	 * check if there is a winner
+	 * 
+	 * @return true== winner, false==no winner found yet
+	 */
+	public abstract boolean hasWon();
+
+	/**
+	 * Updates the game board status for the opponent of the player. (mainly for
+	 * attacks)
+	 *
+	 * @param game The current game board status.
+	 */
+	public void updateOpponentBoard(Gameboard game) {
+		this.opponent_game = game;
+	}
+
+	/**
+	 * Name getter
+	 * 
+	 * @return - name of the player
+	 */
+	public String getName() {
+		return this.name;
+	}
+
+	/**
+	 * Return the array of the ship(length)
+	 * 
+	 * @return - ship array
+	 */
+	public Ship[] getShipArr() {
+		return this.ships;
+	}
+
+	/**
+	 * returns the amount of ships still alive.
+	 * 
+	 * @return ships remaining that are still alive.
+	 */
 	public int getNum_shipsAlive() {
 		return num_shipsAlive;
 	}
 
+	/**
+	 * Set the amount of ships alive on the board.
+	 * 
+	 * @param num_shipsAlive - total number of ships
+	 */
 	public void setNum_shipsAlive(int num_shipsAlive) {
 		this.num_shipsAlive = num_shipsAlive;
 	}
 
-    
-}
