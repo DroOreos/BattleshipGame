@@ -1,0 +1,63 @@
+import static org.junit.Assert.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.PrintStream;
+
+import model.AbstractPlayer;
+import model.HumanPlayer;
+import model.Gameboard;
+import model.GridCell;
+
+public class HumanPlayerTest {
+
+    private AbstractPlayer player = new HumanPlayer("TestPlayer");
+    private Gameboard gameboard = new Gameboard(10,10);
+
+    
+    @Test
+    public void testAdding100Ships() {
+    	player.updateAllGameboards(gameboard, gameboard);
+    	
+    	//only one ship should be added. Overlapping should not occur
+    	for(int i = 0; i < 100; i++) {
+    		((HumanPlayer) player).addShip(0, 0, false, 3);
+    	}
+    	assertEquals(1, player.getNum_shipsAlive()); 
+    	assertNotEquals(100,player.getNumShips());
+    	
+    }
+    
+    @Test
+    public void test_addInvalidShips() {
+    	player.updateAllGameboards(gameboard, gameboard);
+    	
+    	((HumanPlayer) player).addShip(0, 0, true, 3); 
+    	assertEquals(1, player.getNum_shipsAlive());
+    	
+       	((HumanPlayer) player).addShip(5,5, false, 1);
+    	assertEquals(2, player.getNum_shipsAlive());
+    	
+       	((HumanPlayer) player).addShip(30, 30, false, 1); //should not add
+    	assertEquals(2, player.getNum_shipsAlive());
+    	
+       	((HumanPlayer) player).addShip(1, 1, true, 100);
+    	assertEquals(2, player.getNum_shipsAlive());
+    	
+    }
+    
+    @Test
+    public void testPlaceShipsConsole() {
+        String input = "B\n1\n0\nH\n";  // Provide the user input you want to simulate
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        HumanPlayer player = new HumanPlayer("TestPlayer");
+        Gameboard playerBoard = new Gameboard(10, 10);
+
+       
+    }
+
+}
