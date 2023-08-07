@@ -111,6 +111,8 @@ public class BattleShipView extends BorderPane implements Observer {
 		initializeAllPanel();
 
 		initializeImages();
+		
+		initializeImageView();
 
 		initializeRocket();
 
@@ -118,6 +120,7 @@ public class BattleShipView extends BorderPane implements Observer {
 
 		handlers();
 	}
+
 
 	private void initializeBackround() {
 		try {
@@ -164,7 +167,8 @@ public class BattleShipView extends BorderPane implements Observer {
 		shipImages = new Image[5];
 
 		try {
-			URL hit = new URL("https://png.pngtree.com/png-clipart/20190416/ourmid/pngtree-fire-flame-blast-png-png-image_946469.jpg");
+			URL hit = new URL(
+					"https://png.pngtree.com/png-clipart/20190416/ourmid/pngtree-fire-flame-blast-png-png-image_946469.jpg");
 			hit_Image = new Image(hit.toString());
 
 			URL miss = new URL(
@@ -196,6 +200,13 @@ public class BattleShipView extends BorderPane implements Observer {
 		}
 	}
 
+	private void initializeImageView() {
+	    for (int i = 0; i < shipImages.length; i++) {
+	        ImageView shipImageView = new ImageView(shipImages[i]);
+
+	    }
+	}
+	
 	private void initializeRocket() {
 		try {
 			// Load the rocket image from the URL
@@ -314,20 +325,18 @@ public class BattleShipView extends BorderPane implements Observer {
 		// PLAYER GRIDCELLS
 		playerB = theGame.get_playerB().getGrid();
 		GraphicsContext gc = getPlayerBoardCanvas().getGraphicsContext2D();
-		
-		updateBoard(playerB, gc);
 
-		
+		updateBoard(playerB, gc);
 
 		opponentB = theGame.get_opponentB().getGrid();
 		gc = getOpponentBoardCanvas().getGraphicsContext2D();
 		updateBoard(opponentB, gc);
 	}
-	
+
 	private void updateBoard(GridCell[][] board, GraphicsContext gc) {
 		for (int i = 0; i < board.length; i++) {
 			for (int j = 0; j < board[i].length; j++) {
-				
+
 				getCellPixels(i, j);
 
 				switch (board[i][j].getState()) {
@@ -342,8 +351,8 @@ public class BattleShipView extends BorderPane implements Observer {
 				}
 			}
 		}
-	
-}
+
+	}
 
 	// ------------------------------------------------------------------
 
@@ -366,8 +375,10 @@ public class BattleShipView extends BorderPane implements Observer {
 	public void handlers() {
 		opponentBoardCanvas.setOnMouseClicked(new MouseListener_X());
 
-		// opponentBoardCanvas.setOnMouseClicked(new MouseListener());
-		// playerBoardCanvas.setOnMouseClicked(new MouseListner_placeShips());
+		// dragging and dropping
+     //   shipImageView.setOnMousePressed(new ShipDragHandler());
+     //   shipImageView.setOnMouseDragged(new ShipDragHandler());
+     //   shipImageView.setOnMouseReleased(new ShipDragHandler());
 	}
 
 	private class MouseListener_X implements EventHandler<MouseEvent> {
@@ -377,21 +388,18 @@ public class BattleShipView extends BorderPane implements Observer {
 			// Get the pixel where the canvas was just clicked
 			double row = me.getY();
 			double col = me.getX();
-			System.out.println("(we in here" + row + ", " + col + ") ");
+		//	System.out.println("(we in here" + row + ", " + col + ") ");
 
 			int r = (int) (row / CELL_HEIGHT);
 			int c = (int) (col / CELL_WIDTH);
-			GridCell selectedCell = theGame.get_playerB().getGridCell(r, c);
+		//	System.out.println("attacking at: (" + r + "," + c + ") ");
 
-			if (selectedCell.getState() == GridCell.CellState.EMPTY
-					|| selectedCell.getState() == GridCell.CellState.SHIP) {
-				theGame.setPAttack(r, c);
-				
-				//System.out.println("sending attack to" + r + ", " + c + ") ");
-				selectedCell.setState(GridCell.CellState.MISS);
+			boolean successfull = theGame.setPAttack(r, c);
+			if (successfull) {
+				theGame.setOAttack(r, c);
+				animateRocket(col, row);
 
 			}
-			animateRocket(col, row);
 		}
 
 		private void animateRocket(double targetX, double targetY) {
@@ -401,13 +409,13 @@ public class BattleShipView extends BorderPane implements Observer {
 
 			// Create a Path with LineTo elements for the rocket animation
 			Path path = new Path();
-			path.getElements().add(new MoveTo(rocketX, rocketY));
+			path.getElements().add(new MoveTo(50, 100));
 			path.getElements().add(new LineTo(grid_row, grid_col - 500));
 			path.getElements().add(new LineTo(50, 100));
 
 			// Create a PathTransition to animate the rocket
 			PathTransition pT = new PathTransition();
-			pT.setDuration(Duration.millis(4000));
+			pT.setDuration(Duration.millis(2000));
 			pT.setNode(rocket_Image);
 			pT.setPath(path);
 
@@ -415,5 +423,14 @@ public class BattleShipView extends BorderPane implements Observer {
 			pT.play();
 		}
 
+	}
+
+	private class ShipDragHandler implements EventHandler<MouseEvent> {
+
+		@Override
+		public void handle(MouseEvent arg0) {
+			
+		}
+		
 	}
 }

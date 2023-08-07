@@ -29,8 +29,7 @@ public class BattleShipGUI extends Application {
 	private Observer BattleShipView;
 	
 	public static void main(String[] args) { launch(args); }
-	
-	//private BattleShipGame theGame;
+
 	private BorderPane window = new BorderPane();
 	public static final int width = 700;
 	public static final int height = 700;
@@ -51,7 +50,7 @@ public class BattleShipGUI extends Application {
 		battleShipView = new BattleShipView(theGame);
 		BattleShipListeners listeners = new BattleShipListeners(scene,battleShipView.getPlayerBoardCanvas(),battleShipView.getOpponentBoardCanvas(),theGame);
 		
-		listeners.handlers();
+		//listeners.handlers();
 		theGame.addObserver(battleShipView);
 	
 		window.setCenter(battleShipView);

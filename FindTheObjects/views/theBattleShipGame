@@ -59,14 +59,21 @@ public class theBattleShipGame extends Observable {
 	 * @param r The row number of the target location.
 	 * @param c The column number of the target location.
 	 */
-	public void setPAttack(int r, int c) {
-	    o_board.shoot(r, c); // Shoot at the specified location on the opponent's board
+	public boolean setPAttack(int r, int c) {
+		boolean successfull_attack;
+		successfull_attack = o_board.shoot(r, c); // Shoot at the specified location on the opponent's board
+	    
 	    humanPlayer.updateAllGameboards(p_board, o_board); // Update gameboards again after the attack
 
 	    notifyObservers(this); // Notify observers about the change in the game state
-	    this.printAIBoard(o_board); // Print the updated opponent board
-	    this.printPlayerBoard(p_board); // Print the updated player board
+
+	    
+	   // this.printAIBoard(o_board);
+	    
+	    
+	    return successfull_attack;
 	}
+
 
 	/**
 	 * Sets the AI player's attack on the player's board.
