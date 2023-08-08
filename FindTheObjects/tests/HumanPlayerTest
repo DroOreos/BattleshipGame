@@ -29,6 +29,17 @@ public class HumanPlayerTest {
     	assertNotEquals(100,player.getNumShips());
     	
     }
+
+    @Test
+	public void testDelete(){
+		theBattleShipGame theGame = new theBattleShipGame();
+		theGame.getHumanPlayer().addShip(0, 0, true, 2);
+		theGame.getHumanPlayer().delete(theGame.get_playerB());
+		assertEquals(theGame.getHumanPlayer().getNum_shipsAlive(),0);
+		assertEquals(theGame.get_playerB().getGridCell(0, 0).getState(),GridCell.CellState.EMPTY);
+		assertEquals(theGame.get_playerB().getGridCell(1, 0).getState(),GridCell.CellState.EMPTY);
+		
+	}
     
     @Test
     public void test_addInvalidShips() {
