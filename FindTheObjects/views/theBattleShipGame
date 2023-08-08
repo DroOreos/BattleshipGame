@@ -12,10 +12,13 @@ import views.BattleShipView;
 public class theBattleShipGame extends Observable {
 
 	private static Random random = new Random();
+	private static final int ROUNDS_TO_WIN = 3;
 	private AbstractPlayer humanPlayer;
 	private AbstractPlayer aiPlayer;
 	private Gameboard p_board;
 	private Gameboard o_board;
+	private int player1Wins;
+    private int player2Wins;
 	/**
 	 * Constructs theBattleShipGame and sets up the game boards and players.
 	 */
@@ -25,7 +28,8 @@ public class theBattleShipGame extends Observable {
 
 		humanPlayer = new HumanPlayer("bot");
 		aiPlayer = new MockAI("ai", 10, 10);
-
+		player1Wins = 0;
+        player2Wins = 0;
 		humanPlayer.updateStatusOfBoard(p_board);
 		humanPlayer.updateOpponentBoard(o_board);
 
