@@ -1,0 +1,127 @@
+//Brandon Webb
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
+/**
+ * Test class for {@link BattleshipConsolGame}.
+ */
+public class BattleshipConsoleGameTest {
+
+    private BattleshipConsolGame game;
+    private InputStream originalSystemIn;
+
+    @BeforeEach
+    public void setup() {
+        game = new BattleshipConsolGame();
+        originalSystemIn = System.in;
+    }
+
+    @AfterEach
+    public void restoreSystemIn() {
+        System.setIn(originalSystemIn);
+    }
+
+    /**
+     * Test for the input validation method with valid input.
+     */
+    @Test
+    public void testInputValidationValid() {
+        int validInput = game.inputValidation(5);
+        assertEquals(5, validInput);
+    }
+
+    /**
+     * Test for the input validation method with invalid input.
+     */
+    @Test
+    public void testInputValidationInvalid() {
+        int invalidInput = game.inputValidation(15);
+        assertEquals(-1, invalidInput);
+    }
+
+    /**
+     * Test for parsing the row from the input string.
+     */
+    @Test
+    public void testGetRow() {
+        int row = game.getRow("C 4");
+        assertEquals(2, row);
+    }
+
+    /**
+     * Test for parsing the column from the input string.
+     */
+    @Test
+    public void testGetCol() {
+        int col = game.getCol("C 4");
+        assertEquals(4, col);
+    }
+
+    // Test methods for printing boards...
+
+    /**
+     * Test for the player win condition handling.
+     */
+    @Test
+    public void testPlayerWinCondition() {
+        // ...setup mock human player...
+        // ...redirect System.out...
+        // ...test player win condition...
+        // ...assert expected output...
+    }
+
+    /**
+     * Test for the AI win condition handling.
+     */
+    @Test
+    public void testAIWinCondition() {
+        // ...setup mock AI player...
+        // ...redirect System.out...
+        // ...test AI win condition...
+        // ...assert expected output...
+    }
+
+    /**
+     * Test for the main game loop with player win.
+     */
+    @Test
+    public void testGameLoopPlayerWin() {
+        // ...setup mock human player and AI player...
+        // ...setup mock System.in...
+        // ...redirect System.out...
+        // ...test game loop with player win...
+        // ...assert expected output...
+    }
+
+    /**
+     * Test for the main game loop with AI win.
+     */
+    @Test
+    public void testGameLoopAIWin() {
+        // ...setup mock human player and AI player...
+        // ...setup mock System.in...
+        // ...redirect System.out...
+        // ...test game loop with AI win...
+        // ...assert expected output...
+    }
+
+    /**
+     * Test for the main game loop with draw.
+     */
+    @Test
+    public void testGameLoopDraw() {
+        // ...setup mock human player and AI player...
+        // ...setup mock System.in...
+        // ...redirect System.out...
+        // ...test game loop with draw...
+        // ...assert expected output...
+    }
+
+    // More test cases can be added to cover other functionalities of the game
+}

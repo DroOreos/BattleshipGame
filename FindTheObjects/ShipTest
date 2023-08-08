@@ -1,0 +1,84 @@
+//Brandon Webb
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+/**
+ * Test class for {@link Ship}.
+ */
+public class ShipTest {
+
+    private Ship ship;
+
+    @BeforeEach
+    public void setup() {
+        ship = new Ship(3); // Create a ship with size 3 for testing
+    }
+
+    /**
+     * Test for ship's constructor with size parameter.
+     */
+    @Test
+    public void testShipConstructor() {
+        assertEquals(3, ship.length); // Test ship size
+        assertNull(ship.gridCellArr); // Test initial gridCellArr value
+        assertFalse(ship.state); // Test initial state value
+        assertTrue(ship.orenation); // Test initial orenation value
+    }
+
+    /**
+     * Test for ship's constructor with GridCell array parameter.
+     */
+    @Test
+    public void testShipConstructorWithGridCellArr() {
+        GridCell[] arr = new GridCell[3];
+        for (int i = 0; i < 3; i++) {
+            arr[i] = Mockito.mock(GridCell.class);
+        }
+        Ship shipWithArr = new Ship(arr);
+
+        assertEquals(3, shipWithArr.length); // Test ship size
+        assertArrayEquals(arr, shipWithArr.gridCellArr); // Test gridCellArr
+        assertTrue(shipWithArr.state); // Test state
+        assertTrue(shipWithArr.orenation); // Test orenation
+    }
+    /**
+     * Test for rotating the ship when oriented upright.
+     */
+    @Test
+    public void testRotateUpright() {
+        GridCell[] mockGridCellArr = new GridCell[3];
+        for (int i = 0; i < 3; i++) {
+            mockGridCellArr[i] = new GridCell(1, 1 + i);
+            mockGridCellArr[i].setState(GridCell.CellState.SHIP);
+        }
+        ship.gridCellArr = mockGridCellArr;
+        ship.orenation = true;
+
+        GridCell[] rotatedArr = ship.rotate();
+        assertTrue(ship.orenation == false); // New orientation
+        assertEquals(GridCell.CellState.SHIP, rotatedArr[0].state); // Check state
+        // Add assertions for other elements in the rotated array
+    }
+
+    /**
+     * Test for rotating the ship when oriented facing west.
+     */
+    @Test
+    public void testRotateFacingWest() {
+        GridCell[] mockGridCellArr = new GridCell[3];
+        for (int i = 0; i < 3; i++) {
+            mockGridCellArr[i] = new GridCell(1 + i, 1);
+            mockGridCellArr[i].setState(GridCell.CellState.SHIP);
+        }
+        ship.gridCellArr = mockGridCellArr;
+        ship.orenation = false;
+
+        GridCell[] rotatedArr = ship.rotate();
+        assertTrue(ship.orenation == true); // New orientation
+        assertEquals(GridCell.CellState.SHIP, rotatedArr[0].state); // Check state
+        // Add assertions for other elements in the rotated array
+    }
+}
