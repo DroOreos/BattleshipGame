@@ -43,7 +43,13 @@ public class BattleShipListeners {
 	
 	public static final int canvas2TOP = 0;
 	public static final int canvas2BOTTOM = 0;
-
+	/**
+	 * cosntructor class for the BattleShipListeners class 
+	 * @param s - scene object 
+	 * @param playerC - player's canvas view 
+	 * @param opponentC - Opponent's canvas view 
+	 * @param game - theBattleShipGame object, runs the game 
+	 */
 	public BattleShipListeners(Scene s, Canvas playerC, Canvas opponentC,theBattleShipGame game) {
 		this.scene = s;
 		this.playerC = playerC;
@@ -55,17 +61,26 @@ public class BattleShipListeners {
 		this.opp_grid = this.game.get_opponentB().getGrid();
 		
 	}
+	/**
+	 * assigns handlers for game
+	 */
 	public void handlers() {
 		oppC.setOnMouseClicked(new MouseListener_attacking());
 		initalizeKeyListener();
 		playerC.setOnMouseClicked(new MouseListner_placeShips());
 	}
+	/**
+	 * sets key listener for scene
+	 */
 	private void initalizeKeyListener() {
 		scene.setOnKeyPressed(new KeyListener());
 	}
 	private class KeyListener implements EventHandler<KeyEvent>{
 
 		@Override
+		/**
+		 * handles key listener event
+		 */
 		public void handle(KeyEvent event) {
 			// TODO Auto-generated method stub
 			if (event.getCode() == KeyCode.DELETE) {
@@ -79,6 +94,9 @@ public class BattleShipListeners {
 	private class MouseListner_placeShips implements EventHandler<MouseEvent>{
 
 		@Override
+		/**
+		 * handles mouse event
+		 */
 		public void handle(MouseEvent me) {
 			// TODO Auto-generated method stub
 			double row = me.getY();
@@ -156,6 +174,9 @@ public class BattleShipListeners {
 	private class MouseListener_attacking implements EventHandler<MouseEvent> {
 
 		@Override
+		/**
+		 * handles mouse event
+		 */
 		public void handle(MouseEvent me) {
 			// Get the pixel where the canvas was just clicked
 			// TODO Auto-generated method stub

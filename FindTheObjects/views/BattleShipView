@@ -272,7 +272,9 @@ public class BattleShipView extends BorderPane implements Observer {
 		 * width, height); }
 		 */
 	}
-
+	/**
+	 * places ships on the board 
+	 */
 	private void placeShips() {
 		// theGame.placeAIShips();
 		// theGame.printAIBoard(theGame.get_opponentB());
@@ -303,7 +305,9 @@ public class BattleShipView extends BorderPane implements Observer {
 			addDragHandlers(xStart,yStart, width, height, imageIndex, gc);
 		}
 	}
-
+	/**
+	 * sets up handlers for ship dragging
+	 */
 	private void addDragHandlers(int xStart, int yStart, int width, int height, int imageIndex, GraphicsContext gc) {
 		ShipDragHandler dragHandler = new ShipDragHandler(playerBoardCanvas, shipImages);
 		System.out.println("handlers");
@@ -527,6 +531,9 @@ public class BattleShipView extends BorderPane implements Observer {
 		}
 
 		@Override
+		/**
+		 * handles ship drag event
+		 */
 		public void handle(MouseEvent event) {
 		//	System.out.println("handler activated");
 			double mouseX = event.getX();
