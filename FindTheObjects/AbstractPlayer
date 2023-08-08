@@ -123,6 +123,23 @@ public abstract class AbstractPlayer {
 	}
 
 	/**
+	 * returns Ships' coordinates.
+	 * 
+	 * @return String of Ships' coordinates.
+	 */
+ 	public String toString() {
+    	String returnStr = "";
+    	for (Ship ship : ships) {
+    		GridCell[] hello = ship.getShipArr();
+    		for (GridCell gc: hello) {
+    			returnStr +=("("+gc.getX()+","+gc.getY()+"), ");
+
+    		}
+    	}
+    	return returnStr;
+    	}
+
+	/**
 	 * Set the amount of ships alive on the board.
 	 * 
 	 * @param num_shipsAlive - total number of ships
