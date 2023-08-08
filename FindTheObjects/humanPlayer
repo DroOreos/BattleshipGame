@@ -90,7 +90,7 @@ public class HumanPlayer extends AbstractPlayer {
 			}
 		}
 		ships[getNum_shipsAlive() - 1] = null;
-		setNum_shipsAlive(getNum_shipsAlive() - 1);
+		this.num_shipsAlive = this.num_shipsAlive -1;
 
 	}
 
